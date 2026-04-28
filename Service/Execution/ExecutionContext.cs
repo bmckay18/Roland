@@ -13,16 +13,16 @@ namespace Service.Execution
 
         public string GetConfigurationValue(string path)
         {
-            if (path is null)
+            if (string.IsNullOrWhiteSpace(path))
             {
-                throw new ArgumentNullException($"{nameof(path)} cannot be null.");
+                throw new ArgumentNullException((nameof(path)));
             }
 
             var value = _config[path];
 
             if (value is null)
             {
-                throw new InvalidOperationException($"{nameof(path)} appsetting string does not exist.");
+                throw new KeyNotFoundException($"Missing configuration value: {path}");
             }
 
             return value;
