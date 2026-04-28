@@ -1,7 +1,6 @@
 ﻿using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Service.Execution;
 
 namespace Data
 {
