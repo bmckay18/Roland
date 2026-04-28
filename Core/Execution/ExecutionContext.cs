@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Service.Execution
+namespace Core.Execution
 {
     public class ExecutionContext : IExecutionContext
     {

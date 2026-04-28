@@ -1,7 +1,7 @@
 ﻿using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Service.Execution;
+using Core.Execution;
 using Service.Transactions.Models;
 
 namespace Service.Transactions
@@ -19,18 +19,10 @@ namespace Service.Transactions
 
         public async Task AddTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
         {
-            var isValidTransaction = ValidateTransaction(transactionData);
-            if (!isValidTransaction.Item1)
+            var validatedTransactionResults = await ValidateTransaction(transactionData, cancellationToken);
+            if (validatedTransactionResults.Count > 0)
             {
-                throw new InvalidOperationException($"{isValidTransaction.Item2} must be greater than 0.");
-            }
-
-            var doesStockExist = await _db.Stocks
-                .AnyAsync(r => r.StockID == transactionData.StockID, cancellationToken);
-
-            if (!doesStockExist)
-            {
-                throw new InvalidOperationException($"Invalid stock id. The stock ID is: {transactionData.StockID}");
+                throw new InvalidOperationException($"The following parameters were invalid: {string.Join(", ", validatedTransactionResults)}");
             }
 
             var totalCost = (transactionData.UnitPrice * transactionData.Units) + (transactionData.Fee ?? 0);
@@ -50,21 +42,32 @@ namespace Service.Transactions
             await _db.SaveChangesAsync(cancellationToken);
         }
 
-        private (bool, string) ValidateTransaction(TransactionDTO transactionData)
+        private async Task<List<string>> ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
         {
-            if (transactionData.Units <= 0)
+            var errorList = new List<string>();
+
+            if (transactionData.Units < 0)
             {
-                return (false, nameof(transactionData.Units));
+                errorList.Add("Units");
             }
-            if (transactionData.UnitPrice <= 0)
+            if (transactionData.UnitPrice < 0)
             {
-                return (false, nameof(transactionData.UnitPrice));
+                errorList.Add("Unit Price");
             }
-            if (transactionData.Fee <= 0)
+            if (transactionData.Fee < 0)
             {
-                return (false, nameof(transactionData.Fee));
+                errorList.Add("Fee");
             }
-            return (true, "");
+
+            var doesStockExist = await _db.Stocks
+                .AnyAsync(r => r.StockID == transactionData.StockID, cancellationToken);
+
+            if (!doesStockExist)
+            {
+                errorList.Add("Stock ID");
+            }
+
+            return errorList;
         }
     }
 }

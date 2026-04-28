@@ -1,4 +1,4 @@
-﻿namespace Service.Execution
+﻿namespace Core.Execution
 {
     public interface IExecutionContext
     {
