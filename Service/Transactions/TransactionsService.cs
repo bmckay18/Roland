@@ -3,10 +3,11 @@ using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Core.Execution;
 using Service.Transactions.Models;
+using Core.Enums;
 
 namespace Service.Transactions
 {
-    public class TransactionsService
+    public class TransactionsService : ITransactionsService
     {
         private readonly DataContext _db;
         private readonly IExecutionContext _executionContext;
@@ -17,7 +18,7 @@ namespace Service.Transactions
             _executionContext = executionContext;
         }
 
-        public async Task AddTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
+        public async Task AddBuyTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
         {
             var validatedTransactionResults = await ValidateTransaction(transactionData, cancellationToken);
             if (validatedTransactionResults.Count > 0)
@@ -31,7 +32,7 @@ namespace Service.Transactions
             {
                 StockID = transactionData.StockID,
                 Units = transactionData.Units,
-                TransactionType = transactionData.TransactionType,
+                TransactionType = TransactionType.Buy,
                 TransactionDate = transactionData.TransactionDate,
                 UnitPrice = transactionData.UnitPrice,
                 TotalCost = totalCost,
