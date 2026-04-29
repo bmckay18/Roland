@@ -14,8 +14,11 @@ namespace Data.Models
         public DateTime TransactionDate { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal TotalCost { get; set; }
-        public decimal? Fee { get; set; }
+        public decimal Fee { get; set; }
         public int? DistributionID { get; set; }
+        public decimal? RemainingUnits { get; set; }
 
+        public ICollection<ParcelAllocation> BuyAllocations { get; set; }
+        public ICollection<ParcelAllocation> SellAllocations { get; set; }
     }
 }

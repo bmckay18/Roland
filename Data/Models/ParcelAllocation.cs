@@ -8,7 +8,9 @@ namespace Data.Models
     {
         public int ID { get; set; }
         public int BuyTransactionID { get; set; }
+        public Transaction BuyTransaction { get; set; }
         public int SellTransactionID { get; set; }
+        public Transaction SellTransaction { get; set; }
         public decimal UnitsSold { get; set; }
         public decimal UnitPrice { get; set; }
     }
