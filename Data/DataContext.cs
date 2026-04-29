@@ -11,9 +11,9 @@ namespace Data
 
         }
 
-        public DbSet<Distribution> Distributions { get; set; }
-        public DbSet<ParcelAllocation> ParcelAllocations { get; set; }
-        public DbSet<Asset> Assets { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
+        public virtual DbSet<Distribution> Distributions { get; set; }
+        public virtual DbSet<ParcelAllocation> ParcelAllocations { get; set; }
+        public virtual DbSet<Asset> Assets { get; set; }
+        public virtual DbSet<Transaction> Transactions { get; set; }
     }
 }
