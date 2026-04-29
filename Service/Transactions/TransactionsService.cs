@@ -24,7 +24,7 @@ namespace Service.Transactions
 
             var transaction = new Transaction
             {
-                AssetID = transactionData.StockID,
+                AssetID = transactionData.AssetID,
                 Units = transactionData.Units,
                 TransactionType = TransactionType.Buy,
                 TransactionDate = transactionData.TransactionDate,
@@ -53,8 +53,8 @@ namespace Service.Transactions
                 throw new InvalidOperationException("Error: fee must be greater than 0");
             }
 
-            var doesStockExist = await _db.Stocks
-                .AnyAsync(r => r.AssetID == transactionData.StockID, cancellationToken);
+            var doesStockExist = await _db.Assets
+                .AnyAsync(r => r.AssetID == transactionData.AssetID, cancellationToken);
 
             if (!doesStockExist)
             {
