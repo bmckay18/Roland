@@ -2,7 +2,7 @@
 {
     public class TransactionDTO
     {
-        public int StockID { get; set; }
+        public int AssetID { get; set; }
         public decimal Units { get; set; }
         public DateTime TransactionDate { get; set; }
         public decimal UnitPrice { get; set; }

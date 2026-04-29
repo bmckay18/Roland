@@ -8,7 +8,7 @@ namespace Data.Models
     public class Transaction
     {
         public int TransactionID { get; set; }
-        public int StockID { get; set; }
+        public int AssetID { get; set; }
         public decimal Units { get; set; }
         public TransactionType TransactionType { get; set; }
         public DateTime TransactionDate { get; set; }

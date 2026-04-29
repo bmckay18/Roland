@@ -24,7 +24,7 @@ namespace Service.Transactions
 
             var transaction = new Transaction
             {
-                StockID = transactionData.StockID,
+                AssetID = transactionData.StockID,
                 Units = transactionData.Units,
                 TransactionType = TransactionType.Buy,
                 TransactionDate = transactionData.TransactionDate,
@@ -54,7 +54,7 @@ namespace Service.Transactions
             }
 
             var doesStockExist = await _db.Stocks
-                .AnyAsync(r => r.StockID == transactionData.StockID, cancellationToken);
+                .AnyAsync(r => r.AssetID == transactionData.StockID, cancellationToken);
 
             if (!doesStockExist)
             {
