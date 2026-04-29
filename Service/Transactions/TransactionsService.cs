@@ -38,10 +38,66 @@ namespace Service.Transactions
             {
                 throw new InvalidOperationException("There are not enough units to sell.");
             }
-            
+
+            var parcelList = CreateParcelAllocations(unsoldBuyTransactions, requiredUnits, sellTransaction);
+
+            await _db.AddRangeAsync(parcelList, cancellationToken);
+            await _db.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task<Transaction> CreateTransactionAsync(TransactionDTO transactionData, TransactionType transType, CancellationToken cancellationToken)
+        {
+            await ValidateTransaction(transactionData, cancellationToken);
+
+            var totalCost = (transactionData.UnitPrice * transactionData.Units) + transactionData.Fee;
+            decimal? remainingUnits = transType == TransactionType.Buy ? transactionData.Units : null;
+
+            var transaction = new Transaction
+            {
+                AssetID = transactionData.AssetID,
+                Units = transactionData.Units,
+                TransactionType = transType,
+                TransactionDate = transactionData.TransactionDate,
+                UnitPrice = transactionData.UnitPrice,
+                TotalCost = totalCost,
+                Fee = transactionData.Fee,
+                RemainingUnits = remainingUnits
+            };
+
+            await _db.Transactions.AddAsync(transaction, cancellationToken);
+            return transaction;
+        }
+
+        private async Task ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
+        {
+
+            if (transactionData.Units < 0)
+            {
+                throw new InvalidOperationException("Error: units must be greater than 0");
+            }
+            if (transactionData.UnitPrice < 0)
+            {
+                throw new InvalidOperationException("Error: unit price must be greater than 0");
+            }
+            if (transactionData.Fee < 0)
+            {
+                throw new InvalidOperationException("Error: fee must be greater than 0");
+            }
+
+            var doesStockExist = await _db.Assets
+                .AnyAsync(r => r.AssetID == transactionData.AssetID, cancellationToken);
+
+            if (!doesStockExist)
+            {
+                throw new InvalidOperationException("Error: stock doesn't exist");
+            }
+        }
+
+        private List<ParcelAllocation> CreateParcelAllocations(IEnumerable<Transaction> buyTransactions, decimal requiredUnits, Transaction sellTransaction)
+        {
             var parcelList = new List<ParcelAllocation>();
 
-            foreach (var transaction in unsoldBuyTransactions)
+            foreach (var transaction in buyTransactions)
             {
                 if (!transaction.RemainingUnits.HasValue)
                 {
@@ -85,56 +141,7 @@ namespace Service.Transactions
                 }
             }
 
-            await _db.AddRangeAsync(parcelList, cancellationToken);
-            await _db.SaveChangesAsync(cancellationToken);
-        }
-
-        private async Task<Transaction> CreateTransactionAsync(TransactionDTO transactionData, TransactionType transType, CancellationToken cancellationToken)
-        {
-            await ValidateTransaction(transactionData, cancellationToken);
-
-            var totalCost = (transactionData.UnitPrice * transactionData.Units) + transactionData.Fee;
-            decimal? remainingUnits = transType == TransactionType.Buy ? transactionData.Units : null;
-
-            var transaction = new Transaction
-            {
-                AssetID = transactionData.AssetID,
-                Units = transactionData.Units,
-                TransactionType = transType,
-                TransactionDate = transactionData.TransactionDate,
-                UnitPrice = transactionData.UnitPrice,
-                TotalCost = totalCost,
-                Fee = transactionData.Fee,
-                RemainingUnits = remainingUnits
-            };
-
-            _db.Transactions.Add(transaction);
-            return transaction;
-        }
-
-        private async Task ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
-        {
-
-            if (transactionData.Units < 0)
-            {
-                throw new InvalidOperationException("Error: units must be greater than 0");
-            }
-            if (transactionData.UnitPrice < 0)
-            {
-                throw new InvalidOperationException("Error: unit price must be greater than 0");
-            }
-            if (transactionData.Fee < 0)
-            {
-                throw new InvalidOperationException("Error: fee must be greater than 0");
-            }
-
-            var doesStockExist = await _db.Assets
-                .AnyAsync(r => r.AssetID == transactionData.AssetID, cancellationToken);
-
-            if (!doesStockExist)
-            {
-                throw new InvalidOperationException("Error: stock doesn't exist");
-            }
+            return parcelList;
         }
     }
 }
