@@ -10,21 +10,15 @@ namespace Service.Transactions
     public class TransactionsService : ITransactionsService
     {
         private readonly DataContext _db;
-        private readonly IExecutionContext _executionContext;
 
-        public TransactionsService(DataContext db, IExecutionContext executionContext)
+        public TransactionsService(DataContext db)
         {
             _db = db;
-            _executionContext = executionContext;
         }
 
         public async Task AddBuyTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
         {
-            var validatedTransactionResults = await ValidateTransaction(transactionData, cancellationToken);
-            if (validatedTransactionResults.Count > 0)
-            {
-                throw new InvalidOperationException($"The following parameters were invalid: {string.Join(", ", validatedTransactionResults)}");
-            }
+            await ValidateTransaction(transactionData, cancellationToken);
 
             var totalCost = (transactionData.UnitPrice * transactionData.Units) + (transactionData.Fee ?? 0);
 
@@ -43,21 +37,20 @@ namespace Service.Transactions
             await _db.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<List<string>> ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
+        private async Task ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
         {
-            var errorList = new List<string>();
 
             if (transactionData.Units < 0)
             {
-                errorList.Add("Units");
+                throw new InvalidOperationException("Error: units must be greater than 0");
             }
             if (transactionData.UnitPrice < 0)
             {
-                errorList.Add("Unit Price");
+                throw new InvalidOperationException("Error: unit price must be greater than 0");
             }
             if (transactionData.Fee < 0)
             {
-                errorList.Add("Fee");
+                throw new InvalidOperationException("Error: fee must be greater than 0");
             }
 
             var doesStockExist = await _db.Stocks
@@ -65,10 +58,8 @@ namespace Service.Transactions
 
             if (!doesStockExist)
             {
-                errorList.Add("Stock ID");
+                throw new InvalidOperationException("Error: stock doesn't exist");
             }
-
-            return errorList;
         }
     }
 }
