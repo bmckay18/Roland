@@ -27,7 +27,7 @@ namespace Service.Transactions
             var sellTransaction = await CreateTransactionAsync(transactionData, TransactionType.Sell, cancellationToken);
 
             var unsoldBuyTransactions = await _db.Transactions
-                .Where(r => r.RemainingUnits > 0)
+                .Where(r => r.RemainingUnits > 0 && r.AssetID == sellTransaction.AssetID)
                 .OrderBy(r => r.TransactionDate)
                 .ToListAsync(cancellationToken);
 
@@ -84,12 +84,12 @@ namespace Service.Transactions
                 throw new InvalidOperationException("Error: fee must be greater than 0");
             }
 
-            var doesStockExist = await _db.Assets
+            var doesAssetExist = await _db.Assets
                 .AnyAsync(r => r.AssetID == transactionData.AssetID, cancellationToken);
 
-            if (!doesStockExist)
+            if (!doesAssetExist)
             {
-                throw new InvalidOperationException("Error: stock doesn't exist");
+                throw new InvalidOperationException("Error: asset doesn't exist");
             }
         }
 
@@ -108,8 +108,8 @@ namespace Service.Transactions
                 {
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransaction = transaction,
-                        SellTransaction = sellTransaction,
+                        BuyTransactionID = transaction.TransactionID,
+                        SellTransactionID = sellTransaction.TransactionID,
                         UnitsSold = requiredUnits,
                         UnitPrice = transaction.UnitPrice
                     };
@@ -124,8 +124,8 @@ namespace Service.Transactions
 
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransaction = transaction,
-                        SellTransaction = sellTransaction,
+                        BuyTransactionID = transaction.TransactionID,
+                        SellTransactionID = sellTransaction.TransactionID,
                         UnitsSold = transaction.RemainingUnits.Value,
                         UnitPrice = transaction.UnitPrice
                     };

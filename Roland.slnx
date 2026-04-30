@@ -2,4 +2,5 @@
   <Project Path="Core/Core.csproj" />
   <Project Path="Data/Data.csproj" />
   <Project Path="Service/Service.csproj" />
+  <Project Path="Tests/Tests.csproj" Id="aad2db06-e305-4357-99a3-31041bcadce1" />
 </Solution>

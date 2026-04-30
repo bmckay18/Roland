@@ -5,6 +5,6 @@ namespace Service.Transactions
     public interface ITransactionsService
     {
         Task AddBuyTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken);
-        Task AddSellTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
+        Task AddSellTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken);
     }
 }

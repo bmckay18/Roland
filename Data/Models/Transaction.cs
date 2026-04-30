@@ -17,8 +17,5 @@ namespace Data.Models
         public decimal Fee { get; set; }
         public int? DistributionID { get; set; }
         public decimal? RemainingUnits { get; set; }
-
-        public ICollection<ParcelAllocation> BuyAllocations { get; set; }
-        public ICollection<ParcelAllocation> SellAllocations { get; set; }
     }
 }
