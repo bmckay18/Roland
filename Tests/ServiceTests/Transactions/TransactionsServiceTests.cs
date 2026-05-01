@@ -114,7 +114,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task et()
+        public async Task AddSellTransactionAsync_CreatesParcels_IfDataValid()
         {
             var buyTransactions = new List<Transaction>
             {
@@ -138,6 +138,51 @@ namespace Tests.ServiceTests.Transactions
                 .ToListAsync();
 
             Assert.That(parcels, Has.Count.EqualTo(2));
+        }
+
+        [Test]
+        public async Task AddSellTransactionAsync_ThrowsInvalidOperationException_WhenSoldUnitsIsGreaterThanRemainingUnits()
+        {
+            var buyTransaction = new Transaction { AssetID = 1, Units = 1 };
+            await _context.Transactions.AddAsync(buyTransaction);
+            await _context.SaveChangesAsync();
+
+            var sellDto = new TransactionDTO { AssetID = 1, Units = 25, UnitPrice = 2 };
+
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
+            });
+        }
+
+        [Test]
+        public async Task AddSellTransactionAsync_UpdatesRemainingUnits_BasedOnDate()
+        {
+            var buyTransactions = new List<Transaction>
+            {
+                new Transaction {AssetID = 1, RemainingUnits = 10, UnitPrice = 2, TransactionDate = new DateTime(2026, 1, 1)},
+                new Transaction {AssetID = 1, RemainingUnits = 15, UnitPrice = 3, TransactionDate = new DateTime(2025, 1, 1)}
+            };
+
+            await _context.Transactions.AddRangeAsync(buyTransactions);
+            await _context.SaveChangesAsync();
+
+            var sellDto = new TransactionDTO { AssetID = 1, Units = 20, UnitPrice = 2 };
+
+            await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
+
+            var expectedRemainingUnits = 5;
+
+            var buyTransactionsDb = await _context.Transactions
+                .Where(r => r.TransactionType == TransactionType.Buy)
+                .OrderBy(r => r.TransactionDate)
+                .ToListAsync();
+
+            var remainingUnits = buyTransactionsDb.Sum(r => r.RemainingUnits);
+
+            Assert.That(remainingUnits, Is.EqualTo(expectedRemainingUnits));
+            Assert.That(buyTransactionsDb[0].RemainingUnits, Is.EqualTo(0));
+            Assert.That(buyTransactionsDb[1].RemainingUnits, Is.EqualTo(5));
         }
 
         private void Seed()
