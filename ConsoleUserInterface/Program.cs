@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Service.Transactions;
 
 var builder = Host.CreateApplicationBuilder(args);
+Console.WriteLine(builder.Configuration.GetConnectionString("Default"));
 
 // Setup database context
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Default")));

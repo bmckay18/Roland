@@ -8,7 +8,7 @@ namespace ConsoleUserInterface.UserInterface
     {
         public void Run()
         {
-
+            Console.ReadKey();
         }
     }
 }
