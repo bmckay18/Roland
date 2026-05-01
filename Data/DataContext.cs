@@ -8,7 +8,6 @@ namespace Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
-
         }
 
         public virtual DbSet<Distribution> Distributions { get; set; }
