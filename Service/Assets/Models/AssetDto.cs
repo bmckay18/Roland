@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Data.Models
+namespace Service.Assets.Models
 {
-    public class Asset
+    public class AssetDto
     {
-        public int AssetID { get; set; }
+        public int AssetId { get; set; }
         public string AssetName { get; set; }
         public string AssetCode { get; set; }
-        public string Platform { get; set; }
+        public string AssetPlatform { get; set; }
     }
 }

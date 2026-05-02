@@ -9,8 +9,8 @@ namespace Tests.ServiceTests.Transactions
 {
     public class TransactionsServiceTests
     {
-        ITransactionsService _service;
-        DataContext _context;
+        private ITransactionsService _service;
+        private DataContext _context;
 
         [SetUp]
         public void Setup()
@@ -187,7 +187,13 @@ namespace Tests.ServiceTests.Transactions
 
         private void Seed()
         {
-            _context.Assets.Add(new Asset() { AssetID = 1 });
+            _context.Assets.Add(new Asset() 
+            { 
+                AssetID = 1,
+                AssetName = "ABC",
+                AssetCode = "XYZ",
+                Platform = "DEF"
+            });
             _context.SaveChanges();
         }
     }
