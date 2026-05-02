@@ -1,6 +1,6 @@
 ﻿namespace Service.Transactions.Models
 {
-    public class TransactionDTO
+    public class TransactionDto
     {
         public int AssetID { get; set; }
         public decimal Units { get; set; }

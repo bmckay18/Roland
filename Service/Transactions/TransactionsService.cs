@@ -1,7 +1,6 @@
 ﻿using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Core.Execution;
 using Service.Transactions.Models;
 using Core.Enums;
 
@@ -16,13 +15,13 @@ namespace Service.Transactions
             _db = db;
         }
 
-        public async Task AddBuyTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
+        public async Task AddBuyTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken)
         {
             await CreateTransactionAsync(transactionData, TransactionType.Buy, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task AddSellTransactionAsync(TransactionDTO transactionData, CancellationToken cancellationToken)
+        public async Task AddSellTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken)
         {
             var sellTransaction = await CreateTransactionAsync(transactionData, TransactionType.Sell, cancellationToken);
 
@@ -45,7 +44,7 @@ namespace Service.Transactions
             await _db.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<Transaction> CreateTransactionAsync(TransactionDTO transactionData, TransactionType transType, CancellationToken cancellationToken)
+        private async Task<Transaction> CreateTransactionAsync(TransactionDto transactionData, TransactionType transType, CancellationToken cancellationToken)
         {
             await ValidateTransaction(transactionData, cancellationToken);
 
@@ -68,7 +67,7 @@ namespace Service.Transactions
             return transaction;
         }
 
-        private async Task ValidateTransaction(TransactionDTO transactionData, CancellationToken cancellationToken)
+        private async Task ValidateTransaction(TransactionDto transactionData, CancellationToken cancellationToken)
         {
 
             if (transactionData.Units < 0)

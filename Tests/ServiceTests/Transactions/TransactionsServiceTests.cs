@@ -34,7 +34,7 @@ namespace Tests.ServiceTests.Transactions
         [Test]
         public async Task AddBuyTransactionAsync_CreatesBuyTransaction_IfValidData()
         {
-            var dto = new TransactionDTO { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 1, Units = 100 };
+            var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 1, Units = 100 };
 
             await _service.AddBuyTransactionAsync(dto, CancellationToken.None);
 
@@ -53,7 +53,7 @@ namespace Tests.ServiceTests.Transactions
         [Test]
         public async Task AddBuyTransactionAsync_CalculatesCorrectTotalCost_IfValidData()
         {
-            var dto = new TransactionDTO { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
+            var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
 
             await _service.AddBuyTransactionAsync(dto, CancellationToken.None);
 
@@ -67,7 +67,7 @@ namespace Tests.ServiceTests.Transactions
         [Test]
         public async Task AddBuyTransactionAsync_InsertsRemainingUnits_IfBuyTransaction()
         {
-            var dto = new TransactionDTO { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
+            var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
 
             await _service.AddBuyTransactionAsync(dto, CancellationToken.None);
 
@@ -82,7 +82,7 @@ namespace Tests.ServiceTests.Transactions
         [TestCase(0, 0, 0, 2, "asset")]
         public async Task AddBuyTransactionAsync_ThrowsInvalidOperationException_IfInvalidData(decimal fee, decimal unitPrice, decimal units, int assetId, string errorMessage)
         {
-            var dto = new TransactionDTO 
+            var dto = new TransactionDto 
             { 
                 AssetID = 2, 
                 Fee = fee, 
@@ -102,7 +102,7 @@ namespace Tests.ServiceTests.Transactions
         [Test]
         public async Task AddSellTransactionAsync_CreatesSellTransaction_IfDataValid()
         {
-            var sellDto = new TransactionDTO { AssetID = 1 };
+            var sellDto = new TransactionDto { AssetID = 1 };
 
             await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
 
@@ -126,7 +126,7 @@ namespace Tests.ServiceTests.Transactions
             await _context.Transactions.AddRangeAsync(buyTransactions);
             await _context.SaveChangesAsync();
 
-            var sellDto = new TransactionDTO { AssetID = 1, Units = 25, UnitPrice = 2};
+            var sellDto = new TransactionDto { AssetID = 1, Units = 25, UnitPrice = 2};
 
             await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
 
@@ -147,7 +147,7 @@ namespace Tests.ServiceTests.Transactions
             await _context.Transactions.AddAsync(buyTransaction);
             await _context.SaveChangesAsync();
 
-            var sellDto = new TransactionDTO { AssetID = 1, Units = 25, UnitPrice = 2 };
+            var sellDto = new TransactionDto { AssetID = 1, Units = 25, UnitPrice = 2 };
 
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
@@ -167,7 +167,7 @@ namespace Tests.ServiceTests.Transactions
             await _context.Transactions.AddRangeAsync(buyTransactions);
             await _context.SaveChangesAsync();
 
-            var sellDto = new TransactionDTO { AssetID = 1, Units = 20, UnitPrice = 2 };
+            var sellDto = new TransactionDto { AssetID = 1, Units = 20, UnitPrice = 2 };
 
             await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
 
