@@ -8,24 +8,24 @@ namespace Service.Transactions
 {
     public class TransactionsService : ITransactionsService
     {
-        private readonly DataContext _db;
+        private readonly DataContext _context;
 
         public TransactionsService(DataContext db)
         {
-            _db = db;
+            _context = db;
         }
 
         public async Task AddBuyTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken)
         {
             await CreateTransactionAsync(transactionData, TransactionType.Buy, cancellationToken);
-            await _db.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task AddSellTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken)
         {
             var sellTransaction = await CreateTransactionAsync(transactionData, TransactionType.Sell, cancellationToken);
 
-            var unsoldBuyTransactions = await _db.Transactions
+            var unsoldBuyTransactions = await _context.Transactions
                 .Where(r => r.RemainingUnits > 0 && r.AssetID == sellTransaction.AssetID)
                 .OrderBy(r => r.TransactionDate)
                 .ToListAsync(cancellationToken);
@@ -40,8 +40,30 @@ namespace Service.Transactions
 
             var parcelList = CreateParcelAllocations(unsoldBuyTransactions, requiredUnits, sellTransaction);
 
-            await _db.AddRangeAsync(parcelList, cancellationToken);
-            await _db.SaveChangesAsync(cancellationToken);
+            await _context.AddRangeAsync(parcelList, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<List<TransactionReadDto>> GetTransactionsByAsset(int assetId, CancellationToken cancellationToken)
+        {
+            var doesAssetExist = await _context.Assets.AnyAsync(r => r.AssetID == assetId);
+
+            if (!doesAssetExist) throw new ArgumentException($"{nameof(assetId)} must be a valid Asset ID");
+
+            return await _context.Transactions.Where(r => r.AssetID == assetId)
+                .Select(r => new TransactionReadDto
+                {
+                    TransactionId = r.TransactionID,
+                    Units = r.Units,
+                    TransactionType = r.TransactionType,
+                    TransactionDate = r.TransactionDate,
+                    UnitPrice = r.UnitPrice,
+                    Fee = r.Fee,
+                    TotalCost = r.TotalCost,
+                    RemainingUnits = r.RemainingUnits
+                })
+                .OrderBy(r => r.TransactionDate)
+                .ToListAsync(cancellationToken);
         }
 
         private async Task<Transaction> CreateTransactionAsync(TransactionDto transactionData, TransactionType transType, CancellationToken cancellationToken)
@@ -63,7 +85,7 @@ namespace Service.Transactions
                 RemainingUnits = remainingUnits
             };
 
-            await _db.Transactions.AddAsync(transaction, cancellationToken);
+            await _context.Transactions.AddAsync(transaction, cancellationToken);
             return transaction;
         }
 
@@ -83,7 +105,7 @@ namespace Service.Transactions
                 throw new InvalidOperationException("Error: fee must be greater than 0");
             }
 
-            var doesAssetExist = await _db.Assets
+            var doesAssetExist = await _context.Assets
                 .AnyAsync(r => r.AssetID == transactionData.AssetID, cancellationToken);
 
             if (!doesAssetExist)
