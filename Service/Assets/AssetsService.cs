@@ -33,6 +33,7 @@ namespace Service.Assets
         {
             return await _context.Assets.Select(r => new AssetDto()
             {
+                AssetID = r.AssetID,
                 AssetName = r.AssetName,
                 AssetCode = r.AssetCode,
                 AssetPlatform = r.Platform
