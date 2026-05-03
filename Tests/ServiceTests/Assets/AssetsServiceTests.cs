@@ -1,8 +1,8 @@
 ﻿using Data;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Service.Assets;
 using Service.Assets.Models;
-using Service.Transactions;
 
 namespace Tests.ServiceTests.Assets
 {
@@ -54,6 +54,42 @@ namespace Tests.ServiceTests.Assets
             Assert.That(asset.AssetName, Is.EqualTo("Asset1"));
             Assert.That(asset.AssetCode, Is.EqualTo("ABC"));
             Assert.That(asset.Platform, Is.EqualTo("XYZ"));
+        }
+
+        [Test]
+        public async Task GetAssetsAsync_ReturnsEmptyList_WhenNoAssetsExist()
+        {
+            var assetList = await _service.GetAssetsAsync(CancellationToken.None);
+
+            Assert.That(assetList, Is.Empty);
+        }
+
+        [Test]
+        public async Task GetAssetsAsync_ReturnsAssets_WhenAssetsExist()
+        {
+            var assetSeeds = new List<Asset>()
+            {
+                new Asset
+                {
+                    AssetCode = "ABC",
+                    Platform = "DDD",
+                    AssetName = "DEF"
+                },
+                new Asset
+                {
+                    AssetCode = "YYY",
+                    Platform = "SSS",
+                    AssetName = "PLO"
+                }
+            };
+
+            await _context.Assets.AddRangeAsync(assetSeeds);
+            await _context.SaveChangesAsync();
+
+            var assetList = await _service.GetAssetsAsync(CancellationToken.None);
+
+            Assert.That(assetList, Has.Count.EqualTo(2));
+            Assert.That(assetList.First().AssetCode, Is.EqualTo("ABC"));
         }
     }
 }

@@ -20,7 +20,12 @@ namespace Service.Assets
 
             ValidateAssetDto(asset);
 
-            await _context.Assets.AddAsync(new Asset() { AssetName = asset.AssetName, AssetCode = asset.AssetCode, Platform = asset.AssetPlatform }, cancellationToken);
+            await _context.Assets.AddAsync(new Asset()
+            {
+                AssetName = asset.AssetName,
+                AssetCode = asset.AssetCode,
+                Platform = asset.AssetPlatform
+            }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
         }
 
@@ -28,7 +33,6 @@ namespace Service.Assets
         {
             return await _context.Assets.Select(r => new AssetDto()
             {
-                AssetId = r.AssetID,
                 AssetName = r.AssetName,
                 AssetCode = r.AssetCode,
                 AssetPlatform = r.Platform
