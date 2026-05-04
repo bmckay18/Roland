@@ -185,6 +185,32 @@ namespace Tests.ServiceTests.Transactions
             Assert.That(buyTransactionsDb[1].RemainingUnits, Is.EqualTo(5));
         }
 
+        [Test]
+        public async Task GetTransactionsByAsset_ThrowsArgumentException_WhenIdIsInvalid()
+        {
+            Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                await _service.GetTransactionsByAsset(2, CancellationToken.None);
+            });
+        }
+
+        [Test]
+        public async Task GetTransactionsByAsset_ReturnsList_WhenIdIsValid()
+        {
+            var transactions = new List<Transaction>()
+            {
+                new() { AssetID = 1 },
+                new() { AssetID = 1 }
+            };
+
+            await _context.Transactions.AddRangeAsync(transactions);
+            await _context.SaveChangesAsync();
+
+            var transactionList = await _service.GetTransactionsByAsset(1, CancellationToken.None);
+
+            Assert.That(transactionList, Has.Count.EqualTo(2));
+        }
+
         private void Seed()
         {
             _context.Assets.Add(new Asset() 

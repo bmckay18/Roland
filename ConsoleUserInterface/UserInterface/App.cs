@@ -14,7 +14,7 @@ namespace ConsoleUserInterface.UserInterface
         {
             _service = service;
         }
-        public void Run()
+        public void Run(CancellationToken cancellationToken)
         {
             Console.ReadKey();
         }
