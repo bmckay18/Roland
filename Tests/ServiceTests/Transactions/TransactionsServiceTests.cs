@@ -20,7 +20,7 @@ namespace Tests.ServiceTests.Transactions
                 .Options;
 
             _context = new DataContext(options);
-            Seed();
+            SeedDatabase();
 
             _service = new TransactionsService(_context);
         }
@@ -185,7 +185,68 @@ namespace Tests.ServiceTests.Transactions
             Assert.That(buyTransactionsDb[1].RemainingUnits, Is.EqualTo(5));
         }
 
-        private void Seed()
+        [Test]
+        public async Task GetTransactionsByAsset_ThrowsArgumentException_WhenIdIsInvalid()
+        {
+            Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                await _service.GetTransactionsByAsset(2, CancellationToken.None);
+            });
+        }
+
+        [Test]
+        public async Task GetTransactionsByAsset_ReturnsList_WhenIdIsValid()
+        {
+            var transactions = new List<Transaction>()
+            {
+                new() { AssetID = 1 },
+                new() { AssetID = 1 }
+            };
+
+            await _context.Transactions.AddRangeAsync(transactions);
+            await _context.SaveChangesAsync();
+
+            var transactionList = await _service.GetTransactionsByAsset(1, CancellationToken.None);
+
+            Assert.That(transactionList, Has.Count.EqualTo(2));
+        }
+
+        [Test]
+        public async Task GetTransactionsByAsset_ReturnsEmptyList_WhenAssetIsValidAndNoTransactions()
+        {
+            var existingTransactions = new List<Transaction>()
+            {
+                new() { AssetID = 2 },
+                new() { AssetID = 2 }
+            };
+
+            await _context.Transactions.AddRangeAsync(existingTransactions);
+            await _context.SaveChangesAsync();
+
+            var transactions = await _service.GetTransactionsByAsset(1, CancellationToken.None);
+
+            Assert.That(transactions, Has.Count.EqualTo(0));
+        }
+
+        [Test]
+        public async Task GetTransactionsByAsset_ReturnsOrderedList_ByDateTime()
+        {
+            var existingTransactions = new List<Transaction>()
+            {
+                new() { AssetID = 1, TransactionDate = new DateTime(2025,1,1) },
+                new() { AssetID = 1, TransactionDate = new DateTime(2024,1,1) }
+            };
+
+            await _context.Transactions.AddRangeAsync(existingTransactions);
+            await _context.SaveChangesAsync();
+
+            var transactions = await _service.GetTransactionsByAsset(1, CancellationToken.None);
+
+            Assert.That(transactions[0].TransactionDate, Is.EqualTo(new DateTime(2024, 1, 1)));
+            Assert.That(transactions[1].TransactionDate, Is.EqualTo(new DateTime(2025, 1, 1)));
+        }
+
+        private void SeedDatabase()
         {
             _context.Assets.Add(new Asset() 
             { 
