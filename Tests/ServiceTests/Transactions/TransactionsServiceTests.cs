@@ -20,7 +20,7 @@ namespace Tests.ServiceTests.Transactions
                 .Options;
 
             _context = new DataContext(options);
-            Seed();
+            SeedDatabase();
 
             _service = new TransactionsService(_context);
         }
@@ -246,7 +246,7 @@ namespace Tests.ServiceTests.Transactions
             Assert.That(transactions[1].TransactionDate, Is.EqualTo(new DateTime(2025, 1, 1)));
         }
 
-        private void Seed()
+        private void SeedDatabase()
         {
             _context.Assets.Add(new Asset() 
             { 
