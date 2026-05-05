@@ -1,4 +1,6 @@
-﻿using ConsoleUserInterface.UserInterface;
+﻿using ConsoleUserInterface;
+using ConsoleUserInterface.UserInterface;
+using ConsoleUserInterface.UserInterface.Interfaces;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,12 +25,24 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(dbPath))
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
 builder.Services.AddScoped<IAssetsService, AssetsService>();
 builder.Services.AddScoped<IDistributionsService, DistributionsService>();
+
+// Setup UI screens
+builder.Services.AddTransient<IUIController, UIController>();
+builder.Services.AddTransient<IStartMenu>(sp =>
+{
+    return new StartMenu(new[]
+    {
+        "Assets",
+        "Transactions"
+    });
+});
+
 builder.Services.AddTransient<App>();
 
 var host = builder.Build();
 
-using var scope = host.Services.CreateScope();
-var app = scope.ServiceProvider.GetRequiredService<App>();
+var app = host.Services.GetRequiredService<App>();
 
 var cancellationToken = new CancellationTokenSource();
-app.Run(cancellationToken.Token);
+
+await app.RunAsync(cancellationToken.Token);
