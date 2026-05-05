@@ -1,8 +1,7 @@
-﻿namespace Data.Models
+﻿namespace Service.Distributions.Models
 {
-    public class Distribution
+    public class DistributionDto
     {
-        public int DistributionID { get; set; }
         public int AssetID { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime DistributionDate { get; set; }
