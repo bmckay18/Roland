@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Service.Assets;
+using Service.Distributions;
 using Service.Transactions;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -19,6 +21,8 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(dbPath))
 
 // Setup services
 builder.Services.AddScoped<ITransactionsService, TransactionsService>();
+builder.Services.AddScoped<IAssetsService, AssetsService>();
+builder.Services.AddScoped<IDistributionsService, DistributionsService>();
 builder.Services.AddTransient<App>();
 
 var host = builder.Build();
