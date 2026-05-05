@@ -252,6 +252,12 @@ namespace Tests.ServiceTests.Transactions
             Assert.That(1, Is.EqualTo(2));
         }
 
+        [Test]
+        public void ExampleFailedTest2()
+        {
+            Assert.That(1, Is.EqualTo(2));
+        }
+
         private void SeedDatabase()
         {
             _context.Assets.Add(new Asset() 
