@@ -246,18 +246,6 @@ namespace Tests.ServiceTests.Transactions
             Assert.That(transactions[1].TransactionDate, Is.EqualTo(new DateTime(2025, 1, 1)));
         }
 
-        [Test]
-        public void ExampleFailedTest()
-        {
-            Assert.That(1, Is.EqualTo(2));
-        }
-
-        [Test]
-        public void ExampleFailedTest2()
-        {
-            Assert.That(1, Is.EqualTo(2));
-        }
-
         private void SeedDatabase()
         {
             _context.Assets.Add(new Asset() 
