@@ -32,7 +32,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddBuyTransactionAsync_CreatesBuyTransaction_IfValidData()
+        public async Task AddBuyTransactionAsync_CreatesBuyTransaction_WhenValidDataProvided()
         {
             var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 1, Units = 100 };
 
@@ -51,7 +51,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddBuyTransactionAsync_CalculatesCorrectTotalCost_IfValidData()
+        public async Task AddBuyTransactionAsync_CalculatesTotalCost_WhenValidDataProvided()
         {
             var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
 
@@ -65,7 +65,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddBuyTransactionAsync_InsertsRemainingUnits_IfBuyTransaction()
+        public async Task AddBuyTransactionAsync_InsertsRemainingUnits_WhenValidDataProvided()
         {
             var dto = new TransactionDto { AssetID = 1, Fee = 5, TransactionDate = DateTime.Now, UnitPrice = 2, Units = 100 };
 
@@ -80,7 +80,7 @@ namespace Tests.ServiceTests.Transactions
         [TestCase(0, -1, 0, 0, "unit price")]
         [TestCase(-1, 0, 0, 0, "fee")]
         [TestCase(0, 0, 0, 2, "asset")]
-        public async Task AddBuyTransactionAsync_ThrowsInvalidOperationException_IfInvalidData(decimal fee, decimal unitPrice, decimal units, int assetId, string errorMessage)
+        public async Task AddBuyTransactionAsync_ThrowsInvalidOperationException_WhenDataIsInvalid(decimal fee, decimal unitPrice, decimal units, int assetId, string errorMessage)
         {
             var dto = new TransactionDto 
             { 
@@ -100,7 +100,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddSellTransactionAsync_CreatesSellTransaction_IfDataValid()
+        public async Task AddSellTransactionAsync_CreatesSellTransaction_WhenValidDataProvided()
         {
             var sellDto = new TransactionDto { AssetID = 1 };
 
@@ -114,7 +114,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddSellTransactionAsync_CreatesParcels_IfDataValid()
+        public async Task AddSellTransactionAsync_CreatesParcels_WhenValidDataProvided()
         {
             var buyTransactions = new List<Transaction>
             {
@@ -156,7 +156,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task AddSellTransactionAsync_UpdatesRemainingUnits_BasedOnDate()
+        public async Task AddSellTransactionAsync_UpdatesBuyTransactionsRemainingUnits_WhenValidDataProvided()
         {
             var buyTransactions = new List<Transaction>
             {
@@ -212,7 +212,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task GetTransactionsByAsset_ReturnsEmptyList_WhenAssetIsValidAndNoTransactions()
+        public async Task GetTransactionsByAsset_ReturnsEmptyList_WhenAssetIsValidAndNoTransactionsExist()
         {
             var existingTransactions = new List<Transaction>()
             {
@@ -229,7 +229,7 @@ namespace Tests.ServiceTests.Transactions
         }
 
         [Test]
-        public async Task GetTransactionsByAsset_ReturnsOrderedList_ByDateTime()
+        public async Task GetTransactionsByAsset_ReturnsOrderedList_ByDateTime_WhenTransactionsExist()
         {
             var existingTransactions = new List<Transaction>()
             {

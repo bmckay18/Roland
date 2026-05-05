@@ -37,7 +37,7 @@ namespace Tests.ServiceTests.Assets
         }
 
         [Test]
-        public async Task AddAssetAsync_InsertsAssetRecord_IfDataValid()
+        public async Task AddAssetAsync_InsertsAssetRecord_WhenValidDataProvided()
         {
             var assetDto = new AssetDto
             {

@@ -104,7 +104,7 @@ namespace Tests.ServiceTests.Distributions
         }
 
         [Test]
-        public async Task GetDistributionsAsync_ReturnsEmptyList_WhenAssetIdIsValidButNoDistributionsExist()
+        public async Task GetDistributionsAsync_ReturnsEmptyList_WhenAssetIdIsValid_ButNoDistributionsExist()
         {
             var exampleDistributionList = new List<Distribution>()
             {
