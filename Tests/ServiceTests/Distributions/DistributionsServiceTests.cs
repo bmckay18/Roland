@@ -70,6 +70,7 @@ namespace Tests.ServiceTests.Distributions
 
             Assert.That(distribution, Is.Not.Null);
             Assert.That(distribution, Has.Count.EqualTo(1));
+            Assert.That(distribution.First().DistributionID, Is.EqualTo(1));
             Assert.That(distribution.First().AssetID, Is.EqualTo(1));
             Assert.That(distribution.First().TotalAmount, Is.EqualTo(1m));
             Assert.That(distribution.First().DistributionDate, Is.EqualTo(new DateTime(2025,1,1)));
