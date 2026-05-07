@@ -1,4 +1,5 @@
 ﻿using ConsoleUserInterface.Helper.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleUserInterface.Helper
 {
@@ -12,6 +13,14 @@ namespace ConsoleUserInterface.Helper
             {
                 Console.WriteLine($"{index}) {str}");
                 index++;
+            }
+        }
+
+        public static void DisplayMenuOptions(Dictionary<int, string> options)
+        {
+            foreach (var option in options)
+            {
+                Console.WriteLine($"{option.Key}) {option.Value}");
             }
         }
 
@@ -29,6 +38,16 @@ namespace ConsoleUserInterface.Helper
             }
 
             return new ParsedUserInput(false, null);
+        }
+
+        public static ParsedUserInput ParseAndValidateUserInput(string? userInput, Dictionary<int, string> options)
+        {
+            var isInt = int.TryParse(userInput, out int selectedOption);
+
+            if (!isInt) return new ParsedUserInput(false, null);
+
+            var keyExists = options.ContainsKey(selectedOption);
+            return new ParsedUserInput(keyExists, selectedOption);
         }
     }
 }
