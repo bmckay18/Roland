@@ -28,14 +28,7 @@ builder.Services.AddScoped<IDistributionsService, DistributionsService>();
 
 // Setup UI screens
 builder.Services.AddTransient<IUIController, UIController>();
-builder.Services.AddTransient<IStartMenu>(sp =>
-{
-    return new StartMenu(new[]
-    {
-        "Assets",
-        "Transactions"
-    });
-});
+builder.Services.AddTransient<IStartMenu, StartMenu>();
 
 builder.Services.AddTransient<App>();
 

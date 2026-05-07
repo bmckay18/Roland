@@ -5,7 +5,7 @@ namespace ConsoleUserInterface.UserInterface
 {
     public class StartMenu : IStartMenu
     {
-        private readonly string[] _menuOptions;
+        private readonly string[] _menuOptions = new[] { "Transactions", "Assets" };
         private int MenuOptionsCount => _menuOptions.Length;
 
         public StartMenu(string[] menuOptions)
@@ -21,10 +21,10 @@ namespace ConsoleUserInterface.UserInterface
             while (true)
             {
                 Console.WriteLine("Select an option.");
-                MenuOptions.DisplayMenuOptions(_menuOptions);
+                UIHelper.DisplayMenuOptions(_menuOptions);
                 var userInput = Console.ReadLine();
 
-                var parsedInput = MenuOptions.ParseAndValidateUserInput(userInput, MenuOptionsCount);
+                var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, MenuOptionsCount);
 
                 if (parsedInput.IsValidInt && parsedInput.UserOption.HasValue)
                 {

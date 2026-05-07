@@ -12,10 +12,10 @@ namespace ConsoleUserInterface.Transactions
             while (true)
             {
                 Console.WriteLine("What would you like to do?");
-                MenuOptions.DisplayMenuOptions(_transactionOptions);
+                UIHelper.DisplayMenuOptions(_transactionOptions);
                 var userInput = Console.ReadLine();
 
-                var parsedInput = MenuOptions.ParseAndValidateUserInput(userInput, TransactionOptionsCount);
+                var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, TransactionOptionsCount);
             }
         }
     }

@@ -2,7 +2,7 @@
 
 namespace ConsoleUserInterface.Helper
 {
-    public static class MenuOptions
+    public static class UIHelper
     {
         public static void DisplayMenuOptions(IEnumerable<string> options)
         {
