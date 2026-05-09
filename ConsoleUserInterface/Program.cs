@@ -49,7 +49,7 @@ var host = builder.Build();
 using (var scope = host.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-    context.Database.Migrate();
+    await context.Database.MigrateAsync();
 }
 
 // Run App
