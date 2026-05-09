@@ -7,6 +7,7 @@ namespace ConsoleUserInterface.UserInterface.Models
     public enum StartMenuOptionTypes
     {
         Transactions = 1,
-        Assets = 2
+        Assets = 2,
+        Exit = 3
     }
 }

@@ -4,6 +4,7 @@
     {
         Buy = 1,
         Sell = 2,
-        View = 3
+        View = 3,
+        Previous = 4
     }
 }

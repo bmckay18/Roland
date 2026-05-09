@@ -11,7 +11,8 @@ namespace ConsoleUserInterface.Transactions
         {
             { (int)TransactionOptionIDs.Buy, "Add A Buy Transaction" },
             { (int)TransactionOptionIDs.Sell,  "Add A Sell Transaction" },
-            { (int)TransactionOptionIDs.View, "View Transactions" }
+            { (int)TransactionOptionIDs.View, "View Transactions" },
+            { (int)TransactionOptionIDs.Previous, "Go To Previous Page" }
         };
 
         public TransactionsMenu(ICreateTransactionMenu createTransactionMenu)
@@ -38,12 +39,15 @@ namespace ConsoleUserInterface.Transactions
                 switch (parsedInput.UserOption)
                 {
                     case (int)TransactionOptionIDs.Buy:
-                        await _createTransactionMenu.CreateBuyTransaction(cancellationToken);
+                        await _createTransactionMenu.CreateBuyTransactionAsync(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.Sell:
+                        await _createTransactionMenu.CreateSellTransactionAsync(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.View:
                         break;
+                    case (int)TransactionOptionIDs.Previous:
+                        return;
                 }
             }
         }

@@ -1,5 +1,7 @@
 ﻿using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions.Interfaces;
+using ConsoleUserInterface.Transactions.Models;
+using Core.Enums;
 using Service.Assets;
 using Service.Transactions;
 using Service.Transactions.Models;
@@ -12,59 +14,36 @@ namespace ConsoleUserInterface.Transactions
         private readonly ITransactionsService _transactionsService;
         private readonly IAssetsService _assetsService;
 
+        private static readonly string[] _validDateFormats = ["dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy"];
+
         public CreateTransactionMenu(ITransactionsService transactionsService, IAssetsService assetsService)
         {
             _transactionsService = transactionsService;
             _assetsService = assetsService;
         }
 
-        public async Task CreateBuyTransaction(CancellationToken cancellationToken)
+        public async Task CreateBuyTransactionAsync(CancellationToken cancellationToken)
+        {
+            await CreateTransactionAsync(TransactionType.Buy, cancellationToken);
+        }
+
+        public async Task CreateSellTransactionAsync(CancellationToken cancellationToken)
+        {
+            await CreateTransactionAsync(TransactionType.Sell, cancellationToken);
+        }
+
+
+        private async Task CreateTransactionAsync(TransactionType transactionType, CancellationToken cancellationToken)
         {
             var selectedAsset = await ShowAndGetAssetId(cancellationToken);
             if (selectedAsset is null) return;
 
             while (true)
             {
-                // Units
-                Console.WriteLine("Enter the number of units bought");
-                var unitsInput = Console.ReadLine();
-                if (!ValidateDecimalInput(unitsInput!))
-                {
-                    Console.WriteLine("That is not a valid decimal value.");
-                    continue;
-                }
-
-                // Unit Price
-                Console.WriteLine("Enter the unit price of the units");
-                var unitPriceInput = Console.ReadLine();
-                if (!ValidateDecimalInput(unitPriceInput!))
-                {
-                    Console.WriteLine("That is not a valid decimal value.");
-                    continue;
-                }
-
-                // Date
-                Console.WriteLine("Enter the date of the transaction in dd/mm/yyyy format");
-                var dateInput = Console.ReadLine();
-                if (!ValidateDateInput(dateInput!))
-                {
-                    Console.WriteLine("That is not a valid date.");
-                    continue;
-                }
-
-                // Fee
-                Console.WriteLine("Enter the fee for the transaction");
-                var feeInput = Console.ReadLine();
-                if (!ValidateDecimalInput(feeInput!))
-                {
-                    Console.WriteLine("That is not a valid decimal value.");
-                    continue;
-                }
-
-                var units = decimal.Parse(unitsInput!);
-                var unitPrice = decimal.Parse(unitPriceInput!);
-                var fee = decimal.Parse(feeInput!);
-                var date = DateTime.Parse(dateInput!, CultureInfo.InvariantCulture);
+                var units = GetDecimalUserInput("Enter the number of units for the transaction:");
+                var unitPrice = GetDecimalUserInput("Enter the unit price of the units for the transaction:");
+                var fee = GetDecimalUserInput("Enter the fee for the transaction:");
+                var date = GetDateTimeUserInput("Enter the date of the transaction:");
 
                 var transaction = new TransactionDto
                 {
@@ -75,8 +54,54 @@ namespace ConsoleUserInterface.Transactions
                     TransactionDate = date
                 };
 
-                await _transactionsService.AddBuyTransactionAsync(transaction, cancellationToken);
+                switch (transactionType)
+                {
+                    case TransactionType.Buy:
+                        await _transactionsService.AddBuyTransactionAsync(transaction, cancellationToken);
+                        break;
+                    case TransactionType.Sell:
+                        await _transactionsService.AddSellTransactionAsync(transaction, cancellationToken);
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Invalid transaction type: {transactionType}");
+                }
                 break;
+            }
+        }
+
+        private static decimal GetDecimalUserInput(string message)
+        {
+            while (true)
+            {
+                Console.WriteLine(message);
+
+                var input = Console.ReadLine();
+
+                var validatedInput = ValidateDecimalInput(input!);
+                if (!validatedInput.IsValid)
+                {
+                    Console.WriteLine($"Your input is invalid. Try again.");
+                    continue;
+                }
+                return validatedInput.Value;
+            }
+        }
+
+        private static DateTime GetDateTimeUserInput(string message)
+        {
+            while (true)
+            {
+                Console.WriteLine(message);
+
+                var input = Console.ReadLine();
+
+                var validatedInput = ValidateDateInput(input!);
+                if (!validatedInput.IsValid)
+                {
+                    Console.WriteLine($"Your input is invalid. Try again.");
+                    continue;
+                }
+                return validatedInput.Value;
             }
         }
 
@@ -91,7 +116,7 @@ namespace ConsoleUserInterface.Transactions
 
             while (true)
             {
-                Console.WriteLine("Enter an asset ID");
+                Console.WriteLine("Enter an asset ID:");
                 foreach (var asset in assets)
                 {
                     Console.WriteLine($"{asset.AssetID}) {asset.AssetCode}");
@@ -109,21 +134,33 @@ namespace ConsoleUserInterface.Transactions
             }
         }
 
-        private static bool ValidateDecimalInput(string input)
+        private static ParsedResultDto<decimal> ValidateDecimalInput(string input)
         {
-            if (string.IsNullOrEmpty(input)) return false;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return new ParsedResultDto<decimal>(false, default);
+            }
 
             var isDecimal = decimal.TryParse(input, out decimal result);
 
-            if (isDecimal && result >= 0) return true;
-            return false;
+            if (isDecimal && result >= 0)
+            {
+                return new ParsedResultDto<decimal>(true, result);
+            }
+
+            return new ParsedResultDto<decimal>(false, default);
         }
 
-        private static bool ValidateDateInput(string input)
+        private static ParsedResultDto<DateTime> ValidateDateInput(string input)
         {
-            if (string.IsNullOrEmpty(input)) return false;
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return new ParsedResultDto<DateTime>(false, default);
+            }
 
-            return DateTime.TryParse(input, out var _);
+            var isValidDate = DateTime.TryParseExact(input, _validDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result);
+
+            return new ParsedResultDto<DateTime>(isValidDate, isValidDate ? result : default);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     public interface ICreateTransactionMenu
     {
-        Task CreateBuyTransaction(CancellationToken cancellationToken);
+        Task CreateBuyTransactionAsync(CancellationToken cancellationToken);
+        Task CreateSellTransactionAsync(CancellationToken cancellationToken);
     }
 }

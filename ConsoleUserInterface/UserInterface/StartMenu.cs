@@ -9,7 +9,8 @@ namespace ConsoleUserInterface.UserInterface
         private readonly Dictionary<int, string> _menuOptions = new()
         {
             { (int)StartMenuOptionTypes.Transactions, "Transactions" },
-            { (int)StartMenuOptionTypes.Assets, "Assets" }
+            { (int)StartMenuOptionTypes.Assets, "Assets" },
+            { (int)StartMenuOptionTypes.Exit, "Exit Application" }
         };
 
         public int ShowStartMenu()
