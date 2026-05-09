@@ -4,6 +4,7 @@ using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.UserInterface;
 using ConsoleUserInterface.UserInterface.Interfaces;
 using Data;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,12 @@ var dbPath = builder.Configuration.GetConnectionString("Default");
 var appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
 dbPath = dbPath!.Replace("|DataDirectory|", appDataFolder);
+
+var sqliteBuilder = new SqliteConnectionStringBuilder(dbPath);
+var filepath = sqliteBuilder.DataSource;
+
+var directory = Path.GetDirectoryName(filepath);
+if (!Directory.Exists(directory)) Directory.CreateDirectory(directory!);
 
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlite(dbPath));
 
@@ -38,8 +45,19 @@ builder.Services.AddTransient<App>();
 
 var host = builder.Build();
 
-var app = host.Services.GetRequiredService<App>();
+// Apply Migrations
+using (var scope = host.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+}
 
-var cancellationToken = new CancellationTokenSource();
+// Run App
+using (var scope = host.Services.CreateScope())
+{
+    var app = host.Services.GetRequiredService<App>();
 
-await app.RunAsync(cancellationToken.Token);
+    var cancellationToken = new CancellationTokenSource();
+
+    await app.RunAsync(cancellationToken.Token);
+}

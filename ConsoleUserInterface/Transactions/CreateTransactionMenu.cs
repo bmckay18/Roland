@@ -76,6 +76,7 @@ namespace ConsoleUserInterface.Transactions
                 };
 
                 await _transactionsService.AddBuyTransactionAsync(transaction, cancellationToken);
+                break;
             }
         }
 

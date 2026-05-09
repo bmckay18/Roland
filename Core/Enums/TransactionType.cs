@@ -6,7 +6,7 @@ namespace Core.Enums
 {
     public enum TransactionType
     {
-        Buy,
-        Sell
+        Buy = 1,
+        Sell = 2,
     }
 }
