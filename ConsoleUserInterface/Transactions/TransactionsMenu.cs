@@ -7,17 +7,20 @@ namespace ConsoleUserInterface.Transactions
     public class TransactionsMenu : ITransactionsMenu
     {
         private readonly ICreateTransactionMenu _createTransactionMenu;
+        private readonly IDownloadTransactionsMenu _downloadTransactionsMenu;
+
         private readonly Dictionary<int, string> _transactionOptions = new()
         {
             { (int)TransactionOptionIDs.Buy, "Add A Buy Transaction" },
             { (int)TransactionOptionIDs.Sell,  "Add A Sell Transaction" },
-            { (int)TransactionOptionIDs.View, "View Transactions" },
+            { (int)TransactionOptionIDs.Download, "Download Transactions" },
             { (int)TransactionOptionIDs.Previous, "Go To Previous Page" }
         };
 
-        public TransactionsMenu(ICreateTransactionMenu createTransactionMenu)
+        public TransactionsMenu(ICreateTransactionMenu createTransactionMenu, IDownloadTransactionsMenu downloadTransactionsMenu)
         {
             _createTransactionMenu = createTransactionMenu;
+            _downloadTransactionsMenu = downloadTransactionsMenu;
         }
 
         public async Task ShowTransactionsMenu(CancellationToken cancellationToken)
@@ -44,7 +47,8 @@ namespace ConsoleUserInterface.Transactions
                     case (int)TransactionOptionIDs.Sell:
                         await _createTransactionMenu.CreateSellTransactionAsync(cancellationToken);
                         break;
-                    case (int)TransactionOptionIDs.View:
+                    case (int)TransactionOptionIDs.Download:
+                        await _downloadTransactionsMenu.DownloadTransactionsCsv(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.Previous:
                         return;

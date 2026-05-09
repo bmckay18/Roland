@@ -40,6 +40,7 @@ builder.Services.AddTransient<IUIController, UIController>();
 builder.Services.AddTransient<IStartMenu, StartMenu>();
 builder.Services.AddTransient<ITransactionsMenu, TransactionsMenu>();
 builder.Services.AddTransient<ICreateTransactionMenu, CreateTransactionMenu>();
+builder.Services.AddTransient<IDownloadTransactionsMenu, DownloadTransactionsMenu>();
 
 builder.Services.AddTransient<App>();
 

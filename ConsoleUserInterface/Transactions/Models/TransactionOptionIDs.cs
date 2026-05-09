@@ -4,7 +4,7 @@
     {
         Buy = 1,
         Sell = 2,
-        View = 3,
+        Download = 3,
         Previous = 4
     }
 }
