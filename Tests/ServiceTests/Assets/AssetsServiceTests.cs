@@ -72,13 +72,13 @@ namespace Tests.ServiceTests.Assets
                 new Asset
                 {
                     AssetCode = "ABC",
-                    Platform = "DDD",
+                    Platform = "ZZZ",
                     AssetName = "DEF"
                 },
                 new Asset
                 {
                     AssetCode = "YYY",
-                    Platform = "SSS",
+                    Platform = "AAA",
                     AssetName = "PLO"
                 }
             };
@@ -89,7 +89,7 @@ namespace Tests.ServiceTests.Assets
             var assetList = await _service.GetAssetsAsync(CancellationToken.None);
 
             Assert.That(assetList, Has.Count.EqualTo(2));
-            Assert.That(assetList.First().AssetCode, Is.EqualTo("ABC"));
+            Assert.That(assetList.First().AssetCode, Is.EqualTo("YYY"));
         }
     }
 }

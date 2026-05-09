@@ -37,7 +37,9 @@ namespace Service.Assets
                 AssetName = r.AssetName,
                 AssetCode = r.AssetCode,
                 AssetPlatform = r.Platform
-            }).ToListAsync(cancellationToken);
+            })
+                .OrderBy(r => r.AssetPlatform)
+                .ToListAsync(cancellationToken);
         }
 
         private static void ValidateAssetDto(AssetDto asset)
