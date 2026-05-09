@@ -1,17 +1,16 @@
 ﻿using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.UserInterface.Interfaces;
+using ConsoleUserInterface.UserInterface.Models;
 
 namespace ConsoleUserInterface.UserInterface
 {
     public class StartMenu : IStartMenu
     {
-        private readonly string[] _menuOptions = new[] { "Transactions", "Assets" };
-        private int MenuOptionsCount => _menuOptions.Length;
-
-        public StartMenu(string[] menuOptions)
+        private readonly Dictionary<int, string> _menuOptions = new()
         {
-            _menuOptions = menuOptions;
-        }
+            { (int)StartMenuOptionTypes.Transactions, "Transactions" },
+            { (int)StartMenuOptionTypes.Assets, "Assets" }
+        };
 
         public int ShowStartMenu()
         {
@@ -24,7 +23,7 @@ namespace ConsoleUserInterface.UserInterface
                 UIHelper.DisplayMenuOptions(_menuOptions);
                 var userInput = Console.ReadLine();
 
-                var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, MenuOptionsCount);
+                var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, _menuOptions);
 
                 if (parsedInput.IsValidInt && parsedInput.UserOption.HasValue)
                 {

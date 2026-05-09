@@ -1,4 +1,6 @@
 ﻿using ConsoleUserInterface;
+using ConsoleUserInterface.Transactions;
+using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.UserInterface;
 using ConsoleUserInterface.UserInterface.Interfaces;
 using Data;
@@ -29,6 +31,8 @@ builder.Services.AddScoped<IDistributionsService, DistributionsService>();
 // Setup UI screens
 builder.Services.AddTransient<IUIController, UIController>();
 builder.Services.AddTransient<IStartMenu, StartMenu>();
+builder.Services.AddTransient<ITransactionsMenu, TransactionsMenu>();
+builder.Services.AddTransient<ICreateTransactionMenu, CreateTransactionMenu>();
 
 builder.Services.AddTransient<App>();
 

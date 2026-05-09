@@ -1,10 +1,12 @@
 ﻿using ConsoleUserInterface.Helper;
+using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.Transactions.Models;
 
 namespace ConsoleUserInterface.Transactions
 {
-    public class TransactionsMenu
+    public class TransactionsMenu : ITransactionsMenu
     {
+        private readonly ICreateTransactionMenu _createTransactionMenu;
         private readonly Dictionary<int, string> _transactionOptions = new()
         {
             { (int)TransactionOptionIDs.Buy, "Add A Buy Transaction" },
@@ -12,7 +14,12 @@ namespace ConsoleUserInterface.Transactions
             { (int)TransactionOptionIDs.View, "View Transactions" }
         };
 
-        public void ShowTransactionsMenu()
+        public TransactionsMenu(ICreateTransactionMenu createTransactionMenu)
+        {
+            _createTransactionMenu = createTransactionMenu;
+        }
+
+        public async Task ShowTransactionsMenu(CancellationToken cancellationToken)
         {
             while (true)
             {
@@ -31,6 +38,7 @@ namespace ConsoleUserInterface.Transactions
                 switch (parsedInput.UserOption)
                 {
                     case (int)TransactionOptionIDs.Buy:
+                        await _createTransactionMenu.CreateBuyTransaction(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.Sell:
                         break;
