@@ -2,6 +2,7 @@
 using ConsoleUserInterface.Transactions.Interfaces;
 using Service.Assets;
 using Service.Transactions;
+using System.Diagnostics;
 
 namespace ConsoleUserInterface.Transactions
 {
@@ -29,6 +30,7 @@ namespace ConsoleUserInterface.Transactions
                 using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
                 await stream.CopyToAsync(fileStream, cancellationToken);
                 Console.WriteLine($"File created at: {fileStream.Name}");
+                OpenFileLocation(fileStream.Name);
             }
             catch
             {
@@ -64,6 +66,21 @@ namespace ConsoleUserInterface.Transactions
 
                 return selectedOption.UserOption.Value;
             }
+        }
+
+        private static void OpenFileLocation(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new InvalidOperationException($"The specified path does not exist. Path: {path}");
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "explorer.exe",
+                Arguments = "/select,\"" + path + "\"",
+                UseShellExecute = true
+            });
         }
     }
 }
