@@ -1,5 +1,4 @@
 ﻿using ConsoleUserInterface.UserInterface.Interfaces;
-using Service.Transactions;
 
 namespace ConsoleUserInterface
 {
@@ -13,7 +12,16 @@ namespace ConsoleUserInterface
         }
         public async Task RunAsync(CancellationToken cancellationToken)
         {
-            await _uiController.StartAsync(cancellationToken);
+            try
+            {
+                await _uiController.StartAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred. Error: {ex.Message}");
+                Console.WriteLine("Press any key to close the application.");
+                Console.ReadKey();
+            }
         }
     }
 }
