@@ -118,9 +118,9 @@ namespace Tests.ServiceTests.Transactions
         {
             var buyTransactions = new List<Transaction>
             {
-                new Transaction {AssetID = 1, RemainingUnits = 10, UnitPrice = 2},
-                new Transaction {AssetID = 1, RemainingUnits = 15, UnitPrice = 3},
-                new Transaction {AssetID = 2, RemainingUnits = 15, UnitPrice = 3}
+                new Transaction {AssetID = 1, RemainingUnits = 10, UnitPrice = 2, TransactionType = TransactionType.Buy},
+                new Transaction {AssetID = 1, RemainingUnits = 15, UnitPrice = 3, TransactionType = TransactionType.Buy},
+                new Transaction {AssetID = 2, RemainingUnits = 15, UnitPrice = 3, TransactionType = TransactionType.Buy}
             };
 
             await _context.Transactions.AddRangeAsync(buyTransactions);
@@ -130,7 +130,7 @@ namespace Tests.ServiceTests.Transactions
 
             await _service.AddSellTransactionAsync(sellDto, CancellationToken.None);
 
-            var sellTransactions = await _context.Transactions
+            var sellTransaction = await _context.Transactions
                 .Where(t => t.TransactionType == TransactionType.Sell)
                 .FirstAsync();
 
@@ -138,6 +138,7 @@ namespace Tests.ServiceTests.Transactions
                 .ToListAsync();
 
             Assert.That(parcels, Has.Count.EqualTo(2));
+            Assert.That(parcels.First().SellTransactionID, Is.EqualTo(sellTransaction.TransactionID));
         }
 
         [Test]
@@ -160,8 +161,8 @@ namespace Tests.ServiceTests.Transactions
         {
             var buyTransactions = new List<Transaction>
             {
-                new Transaction {AssetID = 1, RemainingUnits = 10, UnitPrice = 2, TransactionDate = new DateTime(2026, 1, 1)},
-                new Transaction {AssetID = 1, RemainingUnits = 15, UnitPrice = 3, TransactionDate = new DateTime(2025, 1, 1)}
+                new Transaction {AssetID = 1, RemainingUnits = 10, UnitPrice = 2, TransactionDate = new DateTime(2026, 1, 1), TransactionType = TransactionType.Buy},
+                new Transaction {AssetID = 1, RemainingUnits = 15, UnitPrice = 3, TransactionDate = new DateTime(2025, 1, 1), TransactionType = TransactionType.Buy}
             };
 
             await _context.Transactions.AddRangeAsync(buyTransactions);

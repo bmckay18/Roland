@@ -129,8 +129,8 @@ namespace Service.Transactions
                 {
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransactionID = transaction.TransactionID,
-                        SellTransactionID = sellTransaction.TransactionID,
+                        BuyTransaction = transaction,
+                        SellTransaction = sellTransaction,
                         UnitsSold = requiredUnits,
                         UnitPrice = transaction.UnitPrice
                     };
@@ -145,8 +145,8 @@ namespace Service.Transactions
 
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransactionID = transaction.TransactionID,
-                        SellTransactionID = sellTransaction.TransactionID,
+                        BuyTransaction = transaction,
+                        SellTransaction = sellTransaction,
                         UnitsSold = transaction.RemainingUnits.Value,
                         UnitPrice = transaction.UnitPrice
                     };
