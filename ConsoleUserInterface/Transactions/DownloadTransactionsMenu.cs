@@ -1,4 +1,4 @@
-﻿using ConsoleUserInterface.Helper;
+﻿using ConsoleUserInterface.Helper.Interfaces;
 using ConsoleUserInterface.Transactions.Interfaces;
 using Service.Assets;
 using Service.Transactions;

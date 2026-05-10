@@ -1,4 +1,5 @@
-﻿using Service.Assets;
+﻿using ConsoleUserInterface.Helper.Interfaces;
+using Service.Assets;
 
 namespace ConsoleUserInterface.Helper
 {

@@ -1,5 +1,5 @@
 ﻿using ConsoleUserInterface.Distributions.Interfaces;
-using ConsoleUserInterface.Helper;
+using ConsoleUserInterface.Helper.Interfaces;
 using Service.Assets;
 using Service.Distributions;
 using System.Diagnostics;

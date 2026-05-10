@@ -1,4 +1,4 @@
-﻿namespace ConsoleUserInterface.Helper
+﻿namespace ConsoleUserInterface.Helper.Interfaces
 {
     public interface IAssetRetriever
     {
