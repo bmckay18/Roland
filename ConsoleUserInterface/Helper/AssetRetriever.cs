@@ -31,13 +31,13 @@ namespace ConsoleUserInterface.Helper
                 var userInput = Console.ReadLine();
                 var selectedOption = UIHelper.ParseAndValidateUserInput(userInput, assets.Count);
 
-                if (!selectedOption.IsValidInt || selectedOption.UserOption is null)
+                if (!selectedOption.IsValid)
                 {
                     Console.WriteLine("That is not a valid option.");
                     continue;
                 }
 
-                return selectedOption.UserOption.Value;
+                return selectedOption.Value;
             }
         }
     }

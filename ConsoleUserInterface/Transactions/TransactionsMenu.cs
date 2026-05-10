@@ -35,13 +35,13 @@ namespace ConsoleUserInterface.Transactions
 
                 var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, _transactionOptions);
 
-                if (!parsedInput.IsValidInt)
+                if (!parsedInput.IsValid)
                 {
                     Console.WriteLine("That is not a valid option.");
                     continue;
                 }
 
-                switch (parsedInput.UserOption)
+                switch (parsedInput.Value)
                 {
                     case (int)TransactionOptionIDs.Buy:
                         await _createTransactionMenu.CreateBuyTransactionAsync(cancellationToken);

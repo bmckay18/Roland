@@ -32,13 +32,13 @@ namespace ConsoleUserInterface.Assets
 
                 var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, _menuOptions);
 
-                if (!parsedInput.IsValidInt)
+                if (!parsedInput.IsValid)
                 {
                     Console.WriteLine("That is not a valid option.");
                     continue;
                 }
 
-                switch (parsedInput.UserOption)
+                switch (parsedInput.Value)
                 {
                     case (int)AssetMenuOptions.AddAsset:
                         await _addAssetMenu.ShowAddAssetMenu(cancellationToken);

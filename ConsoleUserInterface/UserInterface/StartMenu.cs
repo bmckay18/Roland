@@ -27,17 +27,13 @@ namespace ConsoleUserInterface.UserInterface
 
                 var parsedInput = UIHelper.ParseAndValidateUserInput(userInput, _menuOptions);
 
-                if (parsedInput.IsValidInt && parsedInput.UserOption.HasValue)
+                if (parsedInput.IsValid)
                 {
-                    return parsedInput.UserOption.Value;
-                }
-                else if (parsedInput.UserOption is null)
-                {
-                    Console.WriteLine("That is not a valid number.");
+                    return parsedInput.Value;
                 }
                 else
                 {
-                    Console.WriteLine($"{parsedInput.UserOption.Value} is not a valid option.");
+                    Console.WriteLine($"{parsedInput.Value} is not a valid option.");
                 }
             }
         }

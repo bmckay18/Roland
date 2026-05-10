@@ -1,5 +1,4 @@
-﻿using ConsoleUserInterface.Helper.Models;
-using Microsoft.Extensions.DependencyInjection;
+﻿using ConsoleUserInterface.Common.Models;
 
 namespace ConsoleUserInterface.Helper
 {
@@ -24,30 +23,31 @@ namespace ConsoleUserInterface.Helper
             }
         }
 
-        public static ParsedUserInput ParseAndValidateUserInput(string? userInput, int numberOfOptions)
+        public static ParsedResultDto<int> ParseAndValidateUserInput(string? userInput, int numberOfOptions)
         {
             var isInt = int.TryParse(userInput, out int selectedOption);
 
-            if (isInt)
+            if (!isInt)
             {
-                if (selectedOption <= 0 || selectedOption > numberOfOptions)
-                {
-                    return new ParsedUserInput(false, selectedOption);
-                }
-                return new ParsedUserInput(true, selectedOption);
+                return new ParsedResultDto<int>(false, default);
             }
 
-            return new ParsedUserInput(false, null);
+            if (selectedOption <= 0 || selectedOption > numberOfOptions)
+            {
+                return new ParsedResultDto<int>(false, default);
+            }
+
+            return new ParsedResultDto<int>(true, selectedOption);
         }
 
-        public static ParsedUserInput ParseAndValidateUserInput(string? userInput, Dictionary<int, string> options)
+        public static ParsedResultDto<int> ParseAndValidateUserInput(string? userInput, Dictionary<int, string> options)
         {
             var isInt = int.TryParse(userInput, out int selectedOption);
 
-            if (!isInt) return new ParsedUserInput(false, null);
+            if (!isInt) return new ParsedResultDto<int>(false, default);
 
             var keyExists = options.ContainsKey(selectedOption);
-            return new ParsedUserInput(keyExists, selectedOption);
+            return new ParsedResultDto<int>(keyExists, selectedOption);
         }
     }
 }

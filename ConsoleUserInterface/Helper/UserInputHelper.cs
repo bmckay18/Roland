@@ -1,4 +1,4 @@
-﻿using ConsoleUserInterface.Transactions.Models;
+﻿using ConsoleUserInterface.Common.Models;
 using System.Globalization;
 
 namespace ConsoleUserInterface.Helper
