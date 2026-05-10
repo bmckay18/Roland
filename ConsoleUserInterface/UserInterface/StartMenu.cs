@@ -10,6 +10,7 @@ namespace ConsoleUserInterface.UserInterface
         {
             { (int)StartMenuOptionTypes.Transactions, "Transactions" },
             { (int)StartMenuOptionTypes.Assets, "Assets" },
+            { (int)StartMenuOptionTypes.Distributions, "Distributions" },
             { (int)StartMenuOptionTypes.Exit, "Exit Application" }
         };
 

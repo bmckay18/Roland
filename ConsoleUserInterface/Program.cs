@@ -1,6 +1,7 @@
 ﻿using ConsoleUserInterface;
 using ConsoleUserInterface.Assets;
 using ConsoleUserInterface.Assets.Interfaces;
+using ConsoleUserInterface.Distributions;
 using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions;
 using ConsoleUserInterface.Transactions.Interfaces;
@@ -48,6 +49,8 @@ builder.Services.AddTransient<IAssetsMenu, AssetsMenu>();
 builder.Services.AddTransient<IAddAssetMenu, AddAssetMenu>();
 builder.Services.AddTransient<IViewAssetsMenu, ViewAssetsMenu>();
 builder.Services.AddTransient<IAssetRetriever, AssetRetriever>();
+builder.Services.AddTransient<IDistributionsMenu, DistributionsMenu>();
+builder.Services.AddTransient<IAddDistributionMenu, AddDistributionMenu>();
 
 builder.Services.AddTransient<App>();
 

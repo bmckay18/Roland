@@ -8,6 +8,7 @@ namespace ConsoleUserInterface.UserInterface.Models
     {
         Transactions = 1,
         Assets = 2,
-        Exit = 3
+        Distributions = 3,
+        Exit = 4
     }
 }
