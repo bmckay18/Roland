@@ -1,6 +1,7 @@
 ﻿using ConsoleUserInterface;
 using ConsoleUserInterface.Assets;
 using ConsoleUserInterface.Assets.Interfaces;
+using ConsoleUserInterface.Common;
 using ConsoleUserInterface.Distributions;
 using ConsoleUserInterface.Distributions.Interfaces;
 using ConsoleUserInterface.Helper;
@@ -46,14 +47,14 @@ builder.Services.AddTransient<IUIController, UIController>();
 builder.Services.AddTransient<IStartMenu, StartMenu>();
 builder.Services.AddTransient<ITransactionsMenu, TransactionsMenu>();
 builder.Services.AddTransient<ICreateTransactionMenu, CreateTransactionMenu>();
-builder.Services.AddTransient<IDownloadTransactionsMenu, DownloadTransactionsMenu>();
 builder.Services.AddTransient<IAssetsMenu, AssetsMenu>();
 builder.Services.AddTransient<IAddAssetMenu, AddAssetMenu>();
 builder.Services.AddTransient<IViewAssetsMenu, ViewAssetsMenu>();
 builder.Services.AddTransient<IAssetRetriever, AssetRetriever>();
 builder.Services.AddTransient<IDistributionsMenu, DistributionsMenu>();
 builder.Services.AddTransient<IAddDistributionMenu, AddDistributionMenu>();
-builder.Services.AddTransient<IDownloadDistributionsMenu, DownloadDistributionsMenu>();
+builder.Services.AddKeyedTransient<IDownloadCsvService, DownloadDistributionsCsv>("distributionsCsv");
+builder.Services.AddKeyedTransient<IDownloadCsvService, DownloadTransactionsCsv>("transactionsCsv");
 
 builder.Services.AddTransient<App>();
 

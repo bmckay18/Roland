@@ -1,25 +1,22 @@
-﻿using ConsoleUserInterface.Distributions.Interfaces;
-using ConsoleUserInterface.Helper.Interfaces;
+﻿using ConsoleUserInterface.Helper.Interfaces;
 using Service.Assets;
-using Service.Distributions;
 using System.Diagnostics;
 
-namespace ConsoleUserInterface.Distributions
+namespace ConsoleUserInterface.Common
 {
-    public class DownloadDistributionsMenu : IDownloadDistributionsMenu
+    public abstract class DownloadCsvBaseService : IDownloadCsvService
     {
         private readonly IAssetRetriever _assetsRetriever;
-        private readonly IDistributionsService _distributionService;
         private readonly IAssetsService _assetsService;
+        protected virtual string ReportType => "Base Report";
 
-        public DownloadDistributionsMenu(IAssetRetriever assetsRetriever, IAssetsService assetsService, IDistributionsService distributionService)
+        protected DownloadCsvBaseService(IAssetRetriever assetsRetriever, IAssetsService assetsService)
         {
             _assetsRetriever = assetsRetriever;
             _assetsService = assetsService;
-            _distributionService = distributionService;
         }
 
-        public async Task DownloadDistributionsCsv(CancellationToken cancellationToken)
+        public async Task DownloadCsvAsync(CancellationToken cancellationToken)
         {
             var assetId = await _assetsRetriever.ShowAndGetAssetId(cancellationToken);
             if (assetId is null)
@@ -36,9 +33,9 @@ namespace ConsoleUserInterface.Distributions
                 return;
             }
 
-            using var stream = await _distributionService.DownloadDistributionsCsvAsync(assetId.Value, cancellationToken);
+            using var stream = await GetMemoryStreamAsync(assetId.Value, cancellationToken);
 
-            var fileName = $"{assetInformation.AssetCode} Distribution Export {DateTime.Now:yyyy-MM-dd}.csv";
+            var fileName = $"{assetInformation.AssetCode} {ReportType} Export {DateTime.Now:yyyy-MM-dd}.csv";
 
             try
             {
@@ -53,6 +50,8 @@ namespace ConsoleUserInterface.Distributions
                 throw;
             }
         }
+
+        protected abstract Task<MemoryStream> GetMemoryStreamAsync(int assetId, CancellationToken cancellationToken);
 
         private static void OpenFileLocation(string path)
         {

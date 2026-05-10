@@ -1,13 +1,15 @@
-﻿using ConsoleUserInterface.Distributions.Interfaces;
+﻿using ConsoleUserInterface.Common;
+using ConsoleUserInterface.Distributions.Interfaces;
 using ConsoleUserInterface.Distributions.Models;
 using ConsoleUserInterface.Helper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleUserInterface.Distributions
 {
     public class DistributionsMenu : IDistributionsMenu
     {
         private readonly IAddDistributionMenu _addDistributionMenu;
-        private readonly IDownloadDistributionsMenu _downloadDistributionsMenu;
+        private readonly IDownloadCsvService _downloadDistributionsCsvService;
 
         private readonly Dictionary<int, string> _menuOptions = new()
         {
@@ -16,10 +18,10 @@ namespace ConsoleUserInterface.Distributions
             { (int)DistributionMenuOptions.Previous, "Go To Previous Page" }
         };
 
-        public DistributionsMenu(IAddDistributionMenu addDistributionMenu, IDownloadDistributionsMenu downloadDistributionsMenu)
+        public DistributionsMenu(IAddDistributionMenu addDistributionMenu, [FromKeyedServices("distributionsCsv")] IDownloadCsvService downloadCsvBase)
         {
             _addDistributionMenu = addDistributionMenu;
-            _downloadDistributionsMenu = downloadDistributionsMenu;
+            _downloadDistributionsCsvService = downloadCsvBase;
         }
 
         public async Task ShowDistributionsMenu(CancellationToken cancellationToken)
@@ -44,7 +46,7 @@ namespace ConsoleUserInterface.Distributions
                         await _addDistributionMenu.DisplayAddDistributionMenu(cancellationToken);
                         break;
                     case (int)DistributionMenuOptions.Download:
-                        await _downloadDistributionsMenu.DownloadDistributionsCsv(cancellationToken);
+                        await _downloadDistributionsCsvService.DownloadCsvAsync(cancellationToken);
                         break;
                     case (int)DistributionMenuOptions.Previous:
                         return;

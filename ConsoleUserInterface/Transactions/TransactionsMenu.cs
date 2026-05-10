@@ -1,13 +1,15 @@
-﻿using ConsoleUserInterface.Helper;
+﻿using ConsoleUserInterface.Common;
+using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.Transactions.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleUserInterface.Transactions
 {
     public class TransactionsMenu : ITransactionsMenu
     {
         private readonly ICreateTransactionMenu _createTransactionMenu;
-        private readonly IDownloadTransactionsMenu _downloadTransactionsMenu;
+        private readonly IDownloadCsvService _downloadTransactionsService;
 
         private readonly Dictionary<int, string> _transactionOptions = new()
         {
@@ -17,10 +19,10 @@ namespace ConsoleUserInterface.Transactions
             { (int)TransactionOptionIDs.Previous, "Go To Previous Page" }
         };
 
-        public TransactionsMenu(ICreateTransactionMenu createTransactionMenu, IDownloadTransactionsMenu downloadTransactionsMenu)
+        public TransactionsMenu(ICreateTransactionMenu createTransactionMenu, [FromKeyedServices("transactionsCsv")] IDownloadCsvService downloadTransactionsService)
         {
             _createTransactionMenu = createTransactionMenu;
-            _downloadTransactionsMenu = downloadTransactionsMenu;
+            _downloadTransactionsService = downloadTransactionsService;
         }
 
         public async Task ShowTransactionsMenu(CancellationToken cancellationToken)
@@ -48,7 +50,7 @@ namespace ConsoleUserInterface.Transactions
                         await _createTransactionMenu.CreateSellTransactionAsync(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.Download:
-                        await _downloadTransactionsMenu.DownloadTransactionsCsv(cancellationToken);
+                        await _downloadTransactionsService.DownloadCsvAsync(cancellationToken);
                         break;
                     case (int)TransactionOptionIDs.Previous:
                         return;
