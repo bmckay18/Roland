@@ -6,18 +6,20 @@ namespace ConsoleUserInterface.Distributions
 {
     public class DistributionsMenu : IDistributionsMenu
     {
-        private readonly IAddDistributionMenu _addDistributionMenu;        
+        private readonly IAddDistributionMenu _addDistributionMenu;
+        private readonly IDownloadDistributionsMenu _downloadDistributionsMenu;
 
         private readonly Dictionary<int, string> _menuOptions = new()
         {
             { (int)DistributionMenuOptions.Add, "Add New Distribution" },
-            { (int)DistributionMenuOptions.View, "View Distributions" },
+            { (int)DistributionMenuOptions.Download, "Download Distributions" },
             { (int)DistributionMenuOptions.Previous, "Go To Previous Page" }
         };
 
-        public DistributionsMenu(IAddDistributionMenu addDistributionMenu)
+        public DistributionsMenu(IAddDistributionMenu addDistributionMenu, IDownloadDistributionsMenu downloadDistributionsMenu)
         {
             _addDistributionMenu = addDistributionMenu;
+            _downloadDistributionsMenu = downloadDistributionsMenu;
         }
 
         public async Task ShowDistributionsMenu(CancellationToken cancellationToken)
@@ -41,7 +43,8 @@ namespace ConsoleUserInterface.Distributions
                     case (int)DistributionMenuOptions.Add:
                         await _addDistributionMenu.DisplayAddDistributionMenu(cancellationToken);
                         break;
-                    case (int)DistributionMenuOptions.View:
+                    case (int)DistributionMenuOptions.Download:
+                        await _downloadDistributionsMenu.DownloadDistributionsCsv(cancellationToken);
                         break;
                     case (int)DistributionMenuOptions.Previous:
                         return;

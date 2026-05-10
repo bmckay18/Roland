@@ -52,6 +52,7 @@ builder.Services.AddTransient<IViewAssetsMenu, ViewAssetsMenu>();
 builder.Services.AddTransient<IAssetRetriever, AssetRetriever>();
 builder.Services.AddTransient<IDistributionsMenu, DistributionsMenu>();
 builder.Services.AddTransient<IAddDistributionMenu, AddDistributionMenu>();
+builder.Services.AddTransient<IDownloadDistributionsMenu, DownloadDistributionsMenu>();
 
 builder.Services.AddTransient<App>();
 

@@ -121,6 +121,20 @@ namespace Tests.ServiceTests.Distributions
             Assert.That(distributions, Has.Count.EqualTo(0));
         }
 
+        [Test]
+        public async Task DownloadDistributionsCsvAsync_ReturnsStream_WhenDataIsValid()
+        {
+            var transaction = new Transaction { AssetID = 1 };
+            await _context.Transactions.AddAsync(transaction);
+            await _context.SaveChangesAsync();
+
+            using var resultStream = await _service.DownloadDistributionsCsvAsync(1, CancellationToken.None);
+            using var reader = new StreamReader(resultStream);
+            var content = await reader.ReadToEndAsync();
+
+            Assert.That(content, Has.Length.GreaterThan(0));
+        }
+
         private void SeedDatabase()
         {
             _context.Assets.Add(new Asset()

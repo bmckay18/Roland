@@ -3,7 +3,7 @@
     public enum DistributionMenuOptions
     {
         Add = 1,
-        View = 2,
+        Download = 2,
         Previous = 3
     }
 }
