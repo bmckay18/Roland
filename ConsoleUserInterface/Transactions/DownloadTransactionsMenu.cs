@@ -1,5 +1,6 @@
 ﻿using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions.Interfaces;
+using Service.Assets;
 using Service.Transactions;
 using System.Diagnostics;
 
@@ -9,20 +10,35 @@ namespace ConsoleUserInterface.Transactions
     {
         private readonly IAssetRetriever _assetsRetriever;
         private readonly ITransactionsService _transactionsService;
-        public DownloadTransactionsMenu(IAssetRetriever assetsRetriever, ITransactionsService transactionsService)
+        private readonly IAssetsService _assetsService;
+
+        public DownloadTransactionsMenu(IAssetRetriever assetsRetriever, ITransactionsService transactionsService, IAssetsService assetsService)
         {
             _assetsRetriever = assetsRetriever;
             _transactionsService = transactionsService;
+            _assetsService = assetsService;
         }
 
         public async Task DownloadTransactionsCsv(CancellationToken cancellationToken)
         {
             var assetId = await _assetsRetriever.ShowAndGetAssetId(cancellationToken);
-            if (assetId is null) return;
+            if (assetId is null)
+            {
+                Console.WriteLine("The asset does not exist.");
+                return;
+            }
+
+            var assetInformation = await _assetsService.GetAssetByIdAsync(assetId.Value, cancellationToken);
+
+            if (assetInformation is null)
+            {
+                Console.WriteLine("The asset does not exist.");
+                return;
+            }
 
             using var stream = await _transactionsService.DownloadTransactionCsvAsync(assetId.Value, cancellationToken);
 
-            var fileName = $"Transaction Export {DateTime.Now:yyyy-MM-dd}.csv";
+            var fileName = $"{assetInformation.AssetCode} Transaction Export {DateTime.Now:yyyy-MM-dd}.csv";
 
             try
             {
