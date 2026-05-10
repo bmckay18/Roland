@@ -1,4 +1,5 @@
-﻿using ConsoleUserInterface.Distributions.Models;
+﻿using ConsoleUserInterface.Distributions.Interfaces;
+using ConsoleUserInterface.Distributions.Models;
 using ConsoleUserInterface.Helper;
 
 namespace ConsoleUserInterface.Distributions

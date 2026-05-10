@@ -1,4 +1,5 @@
-﻿using ConsoleUserInterface.Helper;
+﻿using ConsoleUserInterface.Distributions.Interfaces;
+using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions.Models;
 using Service.Distributions;
 using Service.Distributions.Models;

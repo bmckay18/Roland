@@ -1,5 +1,5 @@
 ﻿using ConsoleUserInterface.Assets.Interfaces;
-using ConsoleUserInterface.Distributions;
+using ConsoleUserInterface.Distributions.Interfaces;
 using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.UserInterface.Interfaces;
 using ConsoleUserInterface.UserInterface.Models;

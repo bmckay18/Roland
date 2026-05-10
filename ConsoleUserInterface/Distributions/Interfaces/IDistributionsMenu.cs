@@ -1,4 +1,4 @@
-﻿namespace ConsoleUserInterface.Distributions
+﻿namespace ConsoleUserInterface.Distributions.Interfaces
 {
     public interface IDistributionsMenu
     {
