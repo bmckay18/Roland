@@ -23,10 +23,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: >
-        dotnet test --no-build --verbosity normal --configuration Release 
-        --collect:"XPlat Code Coverage"
-        /p:Exclude="[Data]*"
+      run: dotnet test --no-build --verbosity normal --configuration Release --collect:"XPlat Code Coverage"
     - name: Upload coverage
       uses: actions/upload-artifact@v4
       with:
