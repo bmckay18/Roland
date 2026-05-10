@@ -1,7 +1,9 @@
-﻿using Data;
+﻿using CsvHelper;
+using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Service.Distributions.Models;
+using System.Globalization;
 
 namespace Service.Distributions
 {
@@ -59,6 +61,21 @@ namespace Service.Distributions
                     IsReinvested = d.IsReinvested
                 })
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<MemoryStream> DownloadDistributionsCsvAsync(int assetId, CancellationToken cancellationToken)
+        {
+            var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream, leaveOpen: true);
+            using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+
+            var distributions = await GetDistributionsAsync(assetId, cancellationToken);
+
+            await csvWriter.WriteRecordsAsync(distributions);
+            await streamWriter.FlushAsync();
+            memoryStream.Position = 0;
+
+            return memoryStream;
         }
 
         private async Task<bool> DoesAssetExistAsync(int assetId, CancellationToken cancellationToken)

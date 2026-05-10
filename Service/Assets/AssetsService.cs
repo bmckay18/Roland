@@ -37,7 +37,22 @@ namespace Service.Assets
                 AssetName = r.AssetName,
                 AssetCode = r.AssetCode,
                 AssetPlatform = r.Platform
-            }).ToListAsync(cancellationToken);
+            })
+                .OrderBy(r => r.AssetPlatform)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<AssetDto> GetAssetByIdAsync(int assetId, CancellationToken cancellationToken)
+        {
+            return await _context.Assets.Select(r => new AssetDto()
+            {
+                AssetID = r.AssetID,
+                AssetName = r.AssetName,
+                AssetCode = r.AssetCode,
+                AssetPlatform = r.Platform
+            })
+                .Where(r => r.AssetID == assetId)
+                .FirstAsync(cancellationToken);
         }
 
         private static void ValidateAssetDto(AssetDto asset)

@@ -1,6 +1,5 @@
 ﻿using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Data
 {
@@ -14,5 +13,20 @@ namespace Data
         public virtual DbSet<ParcelAllocation> ParcelAllocations { get; set; }
         public virtual DbSet<Asset> Assets { get; set; }
         public virtual DbSet<Transaction> Transactions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ParcelAllocation>()
+                .HasOne(p => p.BuyTransaction)
+                .WithMany()
+                .HasForeignKey(p => p.BuyTransactionID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ParcelAllocation>()
+                .HasOne(p => p.SellTransaction)
+                .WithMany()
+                .HasForeignKey(p => p.SellTransactionID)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

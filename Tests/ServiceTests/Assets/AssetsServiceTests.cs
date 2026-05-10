@@ -72,13 +72,13 @@ namespace Tests.ServiceTests.Assets
                 new Asset
                 {
                     AssetCode = "ABC",
-                    Platform = "DDD",
+                    Platform = "ZZZ",
                     AssetName = "DEF"
                 },
                 new Asset
                 {
                     AssetCode = "YYY",
-                    Platform = "SSS",
+                    Platform = "AAA",
                     AssetName = "PLO"
                 }
             };
@@ -89,7 +89,37 @@ namespace Tests.ServiceTests.Assets
             var assetList = await _service.GetAssetsAsync(CancellationToken.None);
 
             Assert.That(assetList, Has.Count.EqualTo(2));
-            Assert.That(assetList.First().AssetCode, Is.EqualTo("ABC"));
+            Assert.That(assetList.First().AssetCode, Is.EqualTo("YYY"));
+        }
+
+        [Test]
+        public async Task GetAssetsByIdAsync_ReturnsAsset_WhenAssetIdIsValid()
+        {
+            var assetSeeds = new List<Asset>()
+            {
+                new Asset
+                {
+                    AssetCode = "ABC",
+                    Platform = "ZZZ",
+                    AssetName = "DEF",
+                    AssetID = 1
+                },
+                new Asset
+                {
+                    AssetCode = "YYY",
+                    Platform = "AAA",
+                    AssetName = "PLO",
+                    AssetID = 2
+                }
+            };
+
+            await _context.Assets.AddRangeAsync(assetSeeds);
+            await _context.SaveChangesAsync();
+
+            var asset = await _service.GetAssetByIdAsync(1, CancellationToken.None);
+
+            Assert.That(asset, Is.Not.Null);
+            Assert.That(asset.AssetCode, Is.EqualTo("ABC"));
         }
     }
 }

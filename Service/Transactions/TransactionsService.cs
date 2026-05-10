@@ -3,6 +3,8 @@ using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Service.Transactions.Models;
 using Core.Enums;
+using CsvHelper;
+using System.Globalization;
 
 namespace Service.Transactions
 {
@@ -59,11 +61,26 @@ namespace Service.Transactions
                     TransactionDate = r.TransactionDate,
                     UnitPrice = r.UnitPrice,
                     Fee = r.Fee,
-                    TotalCost = r.TotalCost,
-                    RemainingUnits = r.RemainingUnits
+                    TotalCost = r.TotalCost
                 })
                 .OrderBy(r => r.TransactionDate)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<MemoryStream> DownloadTransactionCsvAsync(int assetId, CancellationToken cancellationToken)
+        {
+            var memoryStream = new MemoryStream();
+            using var streamWriter = new StreamWriter(memoryStream, leaveOpen: true);
+            using var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+
+            var transactions = await GetTransactionsByAsset(assetId, cancellationToken);
+
+            await csvWriter.WriteRecordsAsync(transactions);
+            await streamWriter.FlushAsync();
+            memoryStream.Position = 0;
+
+            return memoryStream;
         }
 
         private async Task<Transaction> CreateTransactionAsync(TransactionDto transactionData, TransactionType transType, CancellationToken cancellationToken)
@@ -129,8 +146,8 @@ namespace Service.Transactions
                 {
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransactionID = transaction.TransactionID,
-                        SellTransactionID = sellTransaction.TransactionID,
+                        BuyTransaction = transaction,
+                        SellTransaction = sellTransaction,
                         UnitsSold = requiredUnits,
                         UnitPrice = transaction.UnitPrice
                     };
@@ -145,8 +162,8 @@ namespace Service.Transactions
 
                     var parcel = new ParcelAllocation
                     {
-                        BuyTransactionID = transaction.TransactionID,
-                        SellTransactionID = sellTransaction.TransactionID,
+                        BuyTransaction = transaction,
+                        SellTransaction = sellTransaction,
                         UnitsSold = transaction.RemainingUnits.Value,
                         UnitPrice = transaction.UnitPrice
                     };

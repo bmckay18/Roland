@@ -7,5 +7,6 @@ namespace Service.Transactions
         Task AddBuyTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken);
         Task AddSellTransactionAsync(TransactionDto transactionData, CancellationToken cancellationToken);
         Task<List<TransactionReadDto>> GetTransactionsByAsset(int assetId, CancellationToken cancellationToken);
+        Task<MemoryStream> DownloadTransactionCsvAsync(int assetId, CancellationToken cancellationToken);
     }
 }

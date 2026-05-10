@@ -11,6 +11,5 @@ namespace Service.Transactions.Models
         public decimal UnitPrice { get; set; }
         public decimal Fee { get; set; }
         public decimal TotalCost { get; set; }
-        public decimal? RemainingUnits { get; set; }
     }
 }
