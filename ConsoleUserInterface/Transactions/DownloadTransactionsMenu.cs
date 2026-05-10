@@ -1,6 +1,5 @@
 ﻿using ConsoleUserInterface.Helper;
 using ConsoleUserInterface.Transactions.Interfaces;
-using Service.Assets;
 using Service.Transactions;
 using System.Diagnostics;
 
@@ -8,17 +7,17 @@ namespace ConsoleUserInterface.Transactions
 {
     public class DownloadTransactionsMenu : IDownloadTransactionsMenu
     {
-        private readonly IAssetsService _assetsService;
+        private readonly IAssetRetriever _assetsRetriever;
         private readonly ITransactionsService _transactionsService;
-        public DownloadTransactionsMenu(IAssetsService assetsService, ITransactionsService transactionsService)
+        public DownloadTransactionsMenu(IAssetRetriever assetsRetriever, ITransactionsService transactionsService)
         {
-            _assetsService = assetsService;
+            _assetsRetriever = assetsRetriever;
             _transactionsService = transactionsService;
         }
 
         public async Task DownloadTransactionsCsv(CancellationToken cancellationToken)
         {
-            var assetId = await ShowAndGetAssetId(cancellationToken);
+            var assetId = await _assetsRetriever.ShowAndGetAssetId(cancellationToken);
             if (assetId is null) return;
 
             using var stream = await _transactionsService.DownloadTransactionCsvAsync(assetId.Value, cancellationToken);
@@ -37,35 +36,6 @@ namespace ConsoleUserInterface.Transactions
                 Console.WriteLine("An error occurred whilst downloading your file.");
                 throw;
             }            
-        }
-
-        private async Task<int?> ShowAndGetAssetId(CancellationToken cancellationToken)
-        {
-            var assets = await _assetsService.GetAssetsAsync(cancellationToken);
-            if (assets.Count == 0)
-            {
-                Console.WriteLine("You have no registered assets to display.");
-                return null;
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Enter an asset ID:");
-                foreach (var asset in assets)
-                {
-                    Console.WriteLine($"{asset.AssetID}) {asset.AssetCode}");
-                }
-                var userInput = Console.ReadLine();
-                var selectedOption = UIHelper.ParseAndValidateUserInput(userInput, assets.Count);
-
-                if (!selectedOption.IsValidInt || selectedOption.UserOption is null)
-                {
-                    Console.WriteLine("That is not a valid option.");
-                    continue;
-                }
-
-                return selectedOption.UserOption.Value;
-            }
         }
 
         private static void OpenFileLocation(string path)

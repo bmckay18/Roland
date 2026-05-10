@@ -2,7 +2,6 @@
 using ConsoleUserInterface.Transactions.Interfaces;
 using ConsoleUserInterface.Transactions.Models;
 using Core.Enums;
-using Service.Assets;
 using Service.Transactions;
 using Service.Transactions.Models;
 using System.Globalization;
@@ -12,14 +11,14 @@ namespace ConsoleUserInterface.Transactions
     public class CreateTransactionMenu : ICreateTransactionMenu
     {
         private readonly ITransactionsService _transactionsService;
-        private readonly IAssetsService _assetsService;
+        private readonly IAssetRetriever _assetRetriever;
 
         private static readonly string[] _validDateFormats = ["dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy"];
 
-        public CreateTransactionMenu(ITransactionsService transactionsService, IAssetsService assetsService)
+        public CreateTransactionMenu(ITransactionsService transactionsService, IAssetRetriever assetRetriever)
         {
             _transactionsService = transactionsService;
-            _assetsService = assetsService;
+            _assetRetriever = assetRetriever;
         }
 
         public async Task CreateBuyTransactionAsync(CancellationToken cancellationToken)
@@ -35,7 +34,7 @@ namespace ConsoleUserInterface.Transactions
 
         private async Task CreateTransactionAsync(TransactionType transactionType, CancellationToken cancellationToken)
         {
-            var selectedAsset = await ShowAndGetAssetId(cancellationToken);
+            var selectedAsset = await _assetRetriever.ShowAndGetAssetId(cancellationToken);
             if (selectedAsset is null) return;
 
             while (true)
@@ -102,35 +101,6 @@ namespace ConsoleUserInterface.Transactions
                     continue;
                 }
                 return validatedInput.Value;
-            }
-        }
-
-        private async Task<int?> ShowAndGetAssetId(CancellationToken cancellationToken)
-        {
-            var assets = await _assetsService.GetAssetsAsync(cancellationToken);
-            if (assets.Count == 0)
-            {
-                Console.WriteLine("You have no registered assets to display.");
-                return null;
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Enter an asset ID:");
-                foreach (var asset in assets)
-                {
-                    Console.WriteLine($"{asset.AssetID}) {asset.AssetCode}");
-                }
-                var userInput = Console.ReadLine();
-                var selectedOption = UIHelper.ParseAndValidateUserInput(userInput, assets.Count);
-
-                if (!selectedOption.IsValidInt || selectedOption.UserOption is null)
-                {
-                    Console.WriteLine("That is not a valid option.");
-                    continue;
-                }
-
-                return selectedOption.UserOption.Value;
             }
         }
 
